@@ -1,0 +1,8 @@
+GET http://localhost:8080/actuator
+Accept: application/json
+
+###
+
+GET http://localhost:8080/api/house/1234
+Content-Type:  application/json
+

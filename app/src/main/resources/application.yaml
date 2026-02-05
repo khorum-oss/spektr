@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: spektr
+
+endpoint-jars:
+  dir: ${ENDPOINT_JARS_DIR:./endpoint-jars}

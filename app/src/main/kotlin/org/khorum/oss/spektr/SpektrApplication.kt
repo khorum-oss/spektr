@@ -1,4 +1,4 @@
-package org.khorum.spektr
+package org.khorum.oss.spektr
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
