@@ -19,6 +19,7 @@ jobs:
       java-version: '21'
       build-tasks: 'classes testClasses'
 
+
   test-app:
     needs: build
     uses: violabs/public-cicd/.github/workflows/gradle-unit-tests.yml@main
