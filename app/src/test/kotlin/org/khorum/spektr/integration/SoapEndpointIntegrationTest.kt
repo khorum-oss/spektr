@@ -112,13 +112,13 @@ class SoapEndpointIntegrationTest {
     @Test
     fun `REST endpoints still work alongside SOAP`() {
         webTestClient.get()
-            .uri("/api/house/42")
+            .uri("/api/houses/dbf40fb3-e1bd-4683-8a78-547f054e4d42")
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk
             .expectBody()
-            .jsonPath("$.id").isEqualTo("42")
-            .jsonPath("$.name").isEqualTo("Haunted House 42")
+            .jsonPath("$.id").isEqualTo("dbf40fb3-e1bd-4683-8a78-547f054e4d42")
+            .jsonPath("$.isHaunted").isEqualTo(true)
     }
 
     @Test

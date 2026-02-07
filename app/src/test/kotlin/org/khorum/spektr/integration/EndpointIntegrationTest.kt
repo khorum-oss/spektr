@@ -17,26 +17,40 @@ class EndpointIntegrationTest {
 
     @Test
     fun `GET endpoint returns correct response with path variable`() {
+        // Uses pre-seeded UUID from HouseEndpoints
         webTestClient.get()
-            .uri("/api/house/123")
+            .uri("/api/houses/dbf40fb3-e1bd-4683-8a78-547f054e4d42")
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk
             .expectBody()
-            .jsonPath("$.id").isEqualTo("123")
-            .jsonPath("$.name").isEqualTo("Haunted House 123")
+            .jsonPath("$.id").isEqualTo("dbf40fb3-e1bd-4683-8a78-547f054e4d42")
+            .jsonPath("$.isHaunted").isEqualTo(true)
     }
 
     @Test
     fun `GET endpoint works with different path variables`() {
+        // Uses second pre-seeded UUID from HouseEndpoints
         webTestClient.get()
-            .uri("/api/house/abc-456")
+            .uri("/api/houses/7a99c0dc-64cf-4e0a-948c-1d2a6a191f30")
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk
             .expectBody()
-            .jsonPath("$.id").isEqualTo("abc-456")
-            .jsonPath("$.name").isEqualTo("Haunted House abc-456")
+            .jsonPath("$.id").isEqualTo("7a99c0dc-64cf-4e0a-948c-1d2a6a191f30")
+            .jsonPath("$.isHaunted").isEqualTo(true)
+    }
+
+    @Test
+    fun `GET all houses returns list`() {
+        webTestClient.get()
+            .uri("/api/house")
+            .accept(MediaType.APPLICATION_JSON)
+            .exchange()
+            .expectStatus().isOk
+            .expectBody()
+            .jsonPath("$").isArray
+            .jsonPath("$.length()").isEqualTo(2)
     }
 
     @Test
@@ -51,7 +65,7 @@ class EndpointIntegrationTest {
     @Test
     fun `wrong HTTP method returns 404`() {
         webTestClient.post()
-            .uri("/api/house/123")
+            .uri("/api/houses/dbf40fb3-e1bd-4683-8a78-547f054e4d42")
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isNotFound
