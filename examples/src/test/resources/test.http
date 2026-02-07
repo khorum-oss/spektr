@@ -6,3 +6,19 @@ Accept: application/json
 GET http://localhost:8080/api/house/1234
 Content-Type:  application/json
 
+###
+
+POST http://localhost:8080/ws/weather
+Content-Type: text/xml; charset=utf-8
+SOAPAction: "GetWeather"
+
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+xmlns:ns="http://example.com/namespace">
+  <soap:Header/>
+  <soap:Body>
+    <ns:MyRequest>
+        <ns:Parameter>value</ns:Parameter>
+    </ns:MyRequest>
+  </soap:Body>
+</soap:Envelope>

@@ -40,7 +40,7 @@ class JarEndpointLoader(
         val restCount = if (routerManager != null) {
             val registry = EndpointRegistry()
             modules.forEach { module -> with(module) { registry.configure() } }
-            routerManager!!.updateEndpoints(registry.endpoints)
+            routerManager.updateEndpoints(registry.endpoints)
             log.info("Loaded {} REST endpoints from {} JARs", registry.endpoints.size, jars.size)
             registry.endpoints.size
         } else 0
@@ -48,7 +48,7 @@ class JarEndpointLoader(
         val soapCount = if (soapRouterManager != null) {
             val soapRegistry = SoapEndpointRegistry()
             modules.forEach { module -> with(module) { soapRegistry.configureSoap() } }
-            soapRouterManager!!.updateEndpoints(soapRegistry.endpoints)
+            soapRouterManager.updateEndpoints(soapRegistry.endpoints)
             log.info("Loaded {} SOAP endpoints from {} JARs", soapRegistry.endpoints.size, jars.size)
             soapRegistry.endpoints.size
         } else 0
@@ -90,7 +90,7 @@ class JarEndpointLoader(
                 log.info("Loading REST endpoints from {}", module.javaClass.name)
                 with(module) { registry.configure() }
             }
-            routerManager!!.updateEndpoints(registry.endpoints)
+            routerManager.updateEndpoints(registry.endpoints)
             log.info("Loaded {} REST endpoints from {} JARs", registry.endpoints.size, jars.size)
         }
 
@@ -100,7 +100,7 @@ class JarEndpointLoader(
                 log.info("Loading SOAP endpoints from {}", module.javaClass.name)
                 with(module) { soapRegistry.configureSoap() }
             }
-            soapRouterManager!!.updateEndpoints(soapRegistry.endpoints)
+            soapRouterManager.updateEndpoints(soapRegistry.endpoints)
             log.info("Loaded {} SOAP endpoints from {} JARs", soapRegistry.endpoints.size, jars.size)
         }
     }
