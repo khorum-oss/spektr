@@ -9,8 +9,6 @@ import org.khorum.oss.spektr.service.SoapRouterManager
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.verifyNoInteractions
-import org.springframework.test.util.ReflectionTestUtils
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -19,8 +17,7 @@ class JarEndpointLoaderTest {
     @Test
     fun `loader loads REST endpoints from valid JAR directory`() {
         val routerManager = mock<DynamicRouterManager>()
-        val loader = JarEndpointLoader("../examples/build/libs")
-        ReflectionTestUtils.setField(loader, "routerManager", routerManager)
+        val loader = JarEndpointLoader("../examples/build/libs", routerManager = routerManager)
 
         loader.reloadAll()
 
@@ -34,8 +31,7 @@ class JarEndpointLoaderTest {
     @Test
     fun `loader loads SOAP endpoints from valid JAR directory`() {
         val soapRouterManager = mock<SoapRouterManager>()
-        val loader = JarEndpointLoader("../examples/build/libs")
-        ReflectionTestUtils.setField(loader, "soapRouterManager", soapRouterManager)
+        val loader = JarEndpointLoader("../examples/build/libs", soapRouterManager = soapRouterManager)
 
         loader.reloadAll()
 
@@ -50,9 +46,7 @@ class JarEndpointLoaderTest {
     fun `loader loads both REST and SOAP endpoints`() {
         val routerManager = mock<DynamicRouterManager>()
         val soapRouterManager = mock<SoapRouterManager>()
-        val loader = JarEndpointLoader("../examples/build/libs")
-        ReflectionTestUtils.setField(loader, "routerManager", routerManager)
-        ReflectionTestUtils.setField(loader, "soapRouterManager", soapRouterManager)
+        val loader = JarEndpointLoader("../examples/build/libs", routerManager, soapRouterManager)
 
         val result = loader.reloadAll()
 
@@ -75,8 +69,7 @@ class JarEndpointLoaderTest {
     @Test
     fun `loader works without REST router manager`() {
         val soapRouterManager = mock<SoapRouterManager>()
-        val loader = JarEndpointLoader("../examples/build/libs")
-        ReflectionTestUtils.setField(loader, "soapRouterManager", soapRouterManager)
+        val loader = JarEndpointLoader("../examples/build/libs", soapRouterManager = soapRouterManager)
 
         val result = loader.reloadAll()
 
@@ -87,8 +80,7 @@ class JarEndpointLoaderTest {
     @Test
     fun `loader works without SOAP router manager`() {
         val routerManager = mock<DynamicRouterManager>()
-        val loader = JarEndpointLoader("../examples/build/libs")
-        ReflectionTestUtils.setField(loader, "routerManager", routerManager)
+        val loader = JarEndpointLoader("../examples/build/libs", routerManager = routerManager)
 
         val result = loader.reloadAll()
 

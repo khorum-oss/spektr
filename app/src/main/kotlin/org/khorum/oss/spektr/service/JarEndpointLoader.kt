@@ -5,7 +5,6 @@ import org.khorum.oss.spektr.dsl.EndpointModule
 import org.khorum.oss.spektr.dsl.EndpointRegistry
 import org.khorum.oss.spektr.dsl.SoapEndpointRegistry
 import org.khorum.oss.spektr.utils.Loggable
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.net.URLClassLoader
@@ -17,14 +16,10 @@ import kotlin.io.path.listDirectoryEntries
 @Component
 class JarEndpointLoader(
     @Value("\${endpoint-jars.dir}")
-    private val jarDir: String
+    private val jarDir: String,
+    private val routerManager: DynamicRouterManager? = null,
+    private val soapRouterManager: SoapRouterManager? = null
 ) : Loggable {
-    @Autowired(required = false)
-    private var routerManager: DynamicRouterManager? = null
-
-    @Autowired(required = false)
-    private var soapRouterManager: SoapRouterManager? = null
-
     private var currentLoader: URLClassLoader? = null
 
     data class LoadResult(val count: Int, val jars: Int, val soapCount: Int = 0)
