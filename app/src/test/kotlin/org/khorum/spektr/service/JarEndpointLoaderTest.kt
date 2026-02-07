@@ -7,6 +7,7 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.khorum.oss.spektr.dsl.EndpointDefinition
+import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class JarEndpointLoaderTest {
@@ -30,11 +31,9 @@ class JarEndpointLoaderTest {
         val routerManager = mock<DynamicRouterManager>()
         val loader = JarEndpointLoader(routerManager, "/nonexistent/path")
 
-        loader.reloadAll()
+        val result = loader.reloadAll()
 
-        val captor = argumentCaptor<List<EndpointDefinition>>()
-        verify(routerManager).updateEndpoints(captor.capture())
-
-        assertTrue(captor.firstValue.isEmpty(), "Should return empty list for missing directory")
+        assertEquals(0, result.count, "Should return zero endpoints for missing directory")
+        assertEquals(0, result.jars, "Should return zero jars for missing directory")
     }
 }

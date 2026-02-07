@@ -4,3 +4,6 @@ spring:
 
 endpoint-jars:
   dir: ../examples/build/libs
+
+spektr:
+  additional-configs: "classpath:"
