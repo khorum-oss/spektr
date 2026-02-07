@@ -3,6 +3,7 @@ package org.khorum.oss.spektr.service
 import jakarta.annotation.PostConstruct
 import org.khorum.oss.spektr.dsl.EndpointModule
 import org.khorum.oss.spektr.dsl.EndpointRegistry
+import org.khorum.oss.spektr.dsl.SoapEndpointRegistry
 import org.khorum.oss.spektr.utils.Loggable
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
@@ -14,17 +15,18 @@ import kotlin.io.path.listDirectoryEntries
 
 @Component
 class JarEndpointLoader(
-    private val routerManager: DynamicRouterManager,
-    @Value($$"${endpoint-jars.dir}")
-    private val jarDir: String
+    @Value("\${endpoint-jars.dir}")
+    private val jarDir: String,
+    private val routerManager: DynamicRouterManager? = null,
+    private val soapRouterManager: SoapRouterManager? = null
 ) : Loggable {
     private var currentLoader: URLClassLoader? = null
 
-    data class LoadResult(val count: Int, val jars: Int)
+    data class LoadResult(val count: Int, val jars: Int, val soapCount: Int = 0)
 
     fun reloadAll(): LoadResult {
         val dir = Path.of(jarDir)
-        if (!dir.exists()) return LoadResult(0, 0)
+        if (!dir.exists()) return LoadResult(0, 0, 0)
 
         // Close previous classloader to prevent leaks
         currentLoader?.close()
@@ -33,14 +35,25 @@ class JarEndpointLoader(
         val classLoader = URLClassLoader(jars.toTypedArray(), this::class.java.classLoader)
         currentLoader = classLoader
 
-        val registry = EndpointRegistry()
-        ServiceLoader.load(EndpointModule::class.java, classLoader)
-            .forEach { module -> with(module) { registry.configure() } }
+        val modules = ServiceLoader.load(EndpointModule::class.java, classLoader).toList()
 
-        routerManager.updateEndpoints(registry.endpoints)
-        log.info("Loaded {} endpoints from {} JARs", registry.endpoints.size, jars.size)
+        val restCount = if (routerManager != null) {
+            val registry = EndpointRegistry()
+            modules.forEach { module -> with(module) { registry.configure() } }
+            routerManager.updateEndpoints(registry.endpoints)
+            log.info("Loaded {} REST endpoints from {} JARs", registry.endpoints.size, jars.size)
+            registry.endpoints.size
+        } else 0
 
-        return LoadResult(registry.endpoints.size, jars.size)
+        val soapCount = if (soapRouterManager != null) {
+            val soapRegistry = SoapEndpointRegistry()
+            modules.forEach { module -> with(module) { soapRegistry.configureSoap() } }
+            soapRouterManager.updateEndpoints(soapRegistry.endpoints)
+            log.info("Loaded {} SOAP endpoints from {} JARs", soapRegistry.endpoints.size, jars.size)
+            soapRegistry.endpoints.size
+        } else 0
+
+        return LoadResult(restCount, jars.size, soapCount)
     }
 
     private fun load() {
@@ -49,34 +62,47 @@ class JarEndpointLoader(
 
         if (!dir.exists()) {
             log.warn("JAR directory does not exist: {}", jarDir)
-            routerManager.updateEndpoints(emptyList())
+            routerManager?.updateEndpoints(emptyList())
+            soapRouterManager?.updateEndpoints(emptyList())
             return
         }
 
         val jars = dir.listDirectoryEntries("*.jar")
         if (jars.isEmpty()) {
             log.warn("No JAR files found in {}", jarDir)
-            routerManager.updateEndpoints(emptyList())
+            routerManager?.updateEndpoints(emptyList())
+            soapRouterManager?.updateEndpoints(emptyList())
             return
         }
 
         val jarUrls = jars.map { it.toUri().toURL() }
         val classLoader = URLClassLoader(jarUrls.toTypedArray(), this::class.java.classLoader)
 
-        val registry = EndpointRegistry()
         val modules = ServiceLoader.load(EndpointModule::class.java, classLoader).toList()
 
         if (modules.isEmpty()) {
             log.warn("No EndpointModule implementations found in {} JARs", jars.size)
         }
 
-        modules.forEach { module ->
-            log.info("Loading endpoints from {}", module.javaClass.name)
-            with(module) { registry.configure() }
+        if (routerManager != null) {
+            val registry = EndpointRegistry()
+            modules.forEach { module ->
+                log.info("Loading REST endpoints from {}", module.javaClass.name)
+                with(module) { registry.configure() }
+            }
+            routerManager.updateEndpoints(registry.endpoints)
+            log.info("Loaded {} REST endpoints from {} JARs", registry.endpoints.size, jars.size)
         }
 
-        routerManager.updateEndpoints(registry.endpoints)
-        log.info("Loaded {} endpoints from {} JARs", registry.endpoints.size, jars.size)
+        if (soapRouterManager != null) {
+            val soapRegistry = SoapEndpointRegistry()
+            modules.forEach { module ->
+                log.info("Loading SOAP endpoints from {}", module.javaClass.name)
+                with(module) { soapRegistry.configureSoap() }
+            }
+            soapRouterManager.updateEndpoints(soapRegistry.endpoints)
+            log.info("Loaded {} SOAP endpoints from {} JARs", soapRegistry.endpoints.size, jars.size)
+        }
     }
 
     @PostConstruct

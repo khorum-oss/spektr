@@ -1,6 +1,10 @@
+endpoint-jars:
+  dir: ./examples/build/libs
+
+logging:
+  level:
+    org.khorum.oss.spektr.service: DEBUG
+
 spring:
   main:
     web-application-type: reactive
-
-endpoint-jars:
-  dir: ./examples/build/libs
