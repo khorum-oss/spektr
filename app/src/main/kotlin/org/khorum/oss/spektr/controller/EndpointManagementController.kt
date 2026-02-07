@@ -35,6 +35,7 @@ class EndpointManagementController(
         
         return ResponseEntity.ok(ReloadResult(
             endpointsLoaded = result.count,
+            soapEndpointsLoaded = result.soapCount,
             jarsProcessed = result.jars,
             reloadTimeMs = elapsed
         ))
@@ -43,6 +44,7 @@ class EndpointManagementController(
 
 data class ReloadResult(
     val endpointsLoaded: Int,
+    val soapEndpointsLoaded: Int = 0,
     val jarsProcessed: Int,
     val reloadTimeMs: Long
 )

@@ -3,6 +3,7 @@ package org.khorum.oss.spektr.service
 import org.khorum.oss.spektr.dsl.DynamicRequest
 import org.khorum.oss.spektr.dsl.DynamicResponse
 import org.khorum.oss.spektr.dsl.EndpointDefinition
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.http.MediaType
 import org.springframework.http.server.PathContainer
@@ -17,6 +18,7 @@ import tools.jackson.databind.ObjectMapper
 import java.util.concurrent.atomic.AtomicReference
 
 @Component
+@ConditionalOnProperty(name = ["spektr.rest.enabled"], havingValue = "true", matchIfMissing = true)
 class DynamicRouterManager(
     private val objectMapper: ObjectMapper
 ) {

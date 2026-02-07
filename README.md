@@ -1,12 +1,14 @@
 # Spektr
 
-A dynamic endpoint server that loads HTTP endpoints from external JAR files at runtime. 
+A dynamic endpoint server that loads REST and SOAP endpoints from external JAR files at runtime.
 Perfect for creating mock servers and test fixtures.
 
 ## Features
 
 - **Dynamic endpoint loading** - Load endpoints from JAR files without restarting
 - **Hot reload** - Add or update endpoint JARs and reload via API
+- **REST and SOAP support** - Define both REST and SOAP endpoints in the same module
+- **Protocol toggles** - Enable or disable REST and SOAP independently via configuration
 - **DSL-based configuration** - Define endpoints using a simple Kotlin DSL
 - **ServiceLoader discovery** - Automatically discovers `EndpointModule` implementations
 
@@ -38,6 +40,23 @@ class MyEndpoints : EndpointModule {
             DynamicResponse(status = 201, body = mapOf("created" to true))
         }
     }
+
+    override fun SoapEndpointRegistry.configureSoap() {
+        operation("/ws/greeting", "SayHello") { request ->
+            val name = extractName(request.body)
+            SoapResponse(
+                body = """
+                    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                      <soap:Body>
+                        <SayHelloResponse>
+                          <message>Hello, $name!</message>
+                        </SayHelloResponse>
+                      </soap:Body>
+                    </soap:Envelope>
+                """.trimIndent()
+            )
+        }
+    }
 }
 ```
 
@@ -59,13 +78,42 @@ java -jar app/build/libs/app.jar --endpoint-jars.dir=./my-jars
 | Property | Default | Description |
 |----------|---------|-------------|
 | `endpoint-jars.dir` | `./endpoint-jars` | Directory containing endpoint JAR files |
+| `spektr.rest.enabled` | `true` | Enable or disable REST endpoint loading |
+| `spektr.soap.enabled` | `true` | Enable or disable SOAP endpoint loading |
 
 ### Environment Variables
 
 | Variable | Description |
 |----------|-------------|
 | `ENDPOINT_JARS_DIR` | Override the endpoint JARs directory |
+| `SPEKTR_REST_ENABLED` | Enable/disable REST support (`true`/`false`) |
+| `SPEKTR_SOAP_ENABLED` | Enable/disable SOAP support (`true`/`false`) |
 | `JAVA_OPTS` | JVM options (when using Docker) |
+
+### Protocol Configuration Examples
+
+**REST only (disable SOAP):**
+```yaml
+spektr:
+  soap:
+    enabled: false
+```
+
+**SOAP only (disable REST):**
+```yaml
+spektr:
+  rest:
+    enabled: false
+```
+
+**Both enabled (default):**
+```yaml
+spektr:
+  rest:
+    enabled: true
+  soap:
+    enabled: true
+```
 
 ### Custom Configuration
 
@@ -118,6 +166,14 @@ docker run -p 8080:8080 \
   spektr
 ```
 
+### Run with REST only
+
+```shell
+docker run -p 8080:8080 \
+  -e SPEKTR_SOAP_ENABLED=false \
+  spektr
+```
+
 ### Run with custom JVM options
 
 ```shell
@@ -140,6 +196,7 @@ Response:
 ```json
 {
   "endpointsLoaded": 5,
+  "soapEndpointsLoaded": 3,
   "jarsProcessed": 2,
   "reloadTimeMs": 42
 }
@@ -154,7 +211,7 @@ curl -X POST http://localhost:8080/admin/endpoints/upload \
   -F "jar=@my-endpoints.jar"
 ```
 
-## DSL Reference
+## REST DSL Reference
 
 ### HTTP Methods
 
@@ -204,6 +261,110 @@ errorOn(
     status = 500,
     body = mapOf("error" to "Something went wrong")
 )
+```
+
+## SOAP DSL Reference
+
+### Defining SOAP Operations
+
+Override `configureSoap()` in your `EndpointModule` to define SOAP endpoints:
+
+```kotlin
+class MySoapEndpoints : EndpointModule {
+    override fun EndpointRegistry.configure() {
+        // REST endpoints (can be empty if SOAP-only)
+    }
+
+    override fun SoapEndpointRegistry.configureSoap() {
+        operation("/ws/myservice", "MyAction") { request ->
+            SoapResponse(body = "<MyResponse>...</MyResponse>")
+        }
+    }
+}
+```
+
+### SOAP Operations
+
+```kotlin
+operation(path, soapAction) { request -> SoapResponse(...) }
+```
+
+- `path` - the URL path for the SOAP endpoint (e.g., `/ws/myservice`)
+- `soapAction` - the SOAPAction header value to match
+- `request` - contains headers, soapAction, and the raw XML body
+
+### SOAP Request Properties
+
+```kotlin
+request.headers     // Map<String, List<String>> - HTTP headers
+request.soapAction  // String - the SOAPAction value
+request.body        // String? - raw SOAP XML body
+```
+
+### SOAP Response Options
+
+```kotlin
+SoapResponse(
+    status = 200,                           // HTTP status code (default 200)
+    body = "<soap:Envelope>...</soap:Envelope>",  // XML response body
+    headers = mapOf("X-Custom" to "value")  // Response headers
+)
+```
+
+### SOAP Faults
+
+Use `soapFault()` to register a fault response for a specific action:
+
+```kotlin
+soapFault(
+    path = "/ws/myservice",
+    soapAction = "BadAction",
+    faultCode = "soap:Client",
+    faultString = "Operation not supported"
+)
+```
+
+### Calling SOAP Endpoints
+
+SOAP endpoints are invoked via POST with the `SOAPAction` header and `text/xml` content type:
+
+```shell
+curl -X POST http://localhost:8080/ws/myservice \
+  -H "Content-Type: text/xml" \
+  -H 'SOAPAction: "MyAction"' \
+  -d '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+        <soap:Body>
+          <MyRequest><param>value</param></MyRequest>
+        </soap:Body>
+      </soap:Envelope>'
+```
+
+### Mixed REST and SOAP Module
+
+A single `EndpointModule` can define both REST and SOAP endpoints:
+
+```kotlin
+class MixedEndpoints : EndpointModule {
+    override fun EndpointRegistry.configure() {
+        get("/api/status") { _ ->
+            DynamicResponse(body = mapOf("status" to "ok"))
+        }
+    }
+
+    override fun SoapEndpointRegistry.configureSoap() {
+        operation("/ws/status", "GetStatus") { _ ->
+            SoapResponse(
+                body = """
+                    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                      <soap:Body>
+                        <GetStatusResponse><status>ok</status></GetStatusResponse>
+                      </soap:Body>
+                    </soap:Envelope>
+                """.trimIndent()
+            )
+        }
+    }
+}
 ```
 
 ## Development

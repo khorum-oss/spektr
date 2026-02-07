@@ -21,13 +21,14 @@ class EndpointManagementControllerTest {
     @Test
     fun `reload returns endpoint and jar counts`() {
         val jarLoader = mock<JarEndpointLoader>()
-        whenever(jarLoader.reloadAll()).thenReturn(JarEndpointLoader.LoadResult(5, 2))
+        whenever(jarLoader.reloadAll()).thenReturn(JarEndpointLoader.LoadResult(5, 2, 3))
 
         val controller = EndpointManagementController(tempDir.toString(), jarLoader)
         val response = controller.reload()
 
         assertEquals(HttpStatus.OK, response.statusCode)
         assertEquals(5, response.body?.endpointsLoaded)
+        assertEquals(3, response.body?.soapEndpointsLoaded)
         assertEquals(2, response.body?.jarsProcessed)
         assertTrue(response.body?.reloadTimeMs!! >= 0)
         verify(jarLoader).reloadAll()

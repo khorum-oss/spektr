@@ -7,3 +7,7 @@ endpoint-jars:
 
 spektr:
   additional-configs: ${CONFIGS_DIR:optional:file:./Users/violabs/Projects/spektr/app}
+  rest:
+    enabled: ${SPEKTR_REST_ENABLED:true}
+  soap:
+    enabled: ${SPEKTR_SOAP_ENABLED:true}
