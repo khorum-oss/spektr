@@ -11,6 +11,10 @@ class EndpointRegistry {
     fun delete(path: String, handler: DynamicHandler) = register(HttpMethod.DELETE, path, handler)
     fun options(path: String, handler: DynamicHandler) = register(HttpMethod.OPTIONS, path, handler)
 
+    fun returnBody(body: Any?): DynamicResponse = DynamicResponse(body = body)
+
+    fun returnStatus(status: Int): DynamicResponse = DynamicResponse(status = status)
+
     private fun register(method: HttpMethod, path: String, handler: DynamicHandler) {
         endpointList.add(EndpointDefinition(method, path, handler))
     }

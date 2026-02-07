@@ -3,6 +3,7 @@ package org.khorum.oss.spektr.service
 import org.khorum.oss.spektr.dsl.DynamicRequest
 import org.khorum.oss.spektr.dsl.DynamicResponse
 import org.khorum.oss.spektr.dsl.EndpointDefinition
+import org.khorum.oss.spektr.utils.Loggable
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.http.MediaType
@@ -21,7 +22,7 @@ import java.util.concurrent.atomic.AtomicReference
 @ConditionalOnProperty(name = ["spektr.rest.enabled"], havingValue = "true", matchIfMissing = true)
 class DynamicRouterManager(
     private val objectMapper: ObjectMapper
-) {
+) : Loggable {
     private val registry = AtomicReference<List<EndpointDefinition>>(emptyList())
 
     fun updateEndpoints(definitions: List<EndpointDefinition>) {
@@ -32,18 +33,49 @@ class DynamicRouterManager(
     @Bean
     fun dynamicRouterFunction(): RouterFunction<ServerResponse> {
         return RouterFunction { request ->
+            log.debug("Incoming request: {} {}", request.method(), request.path())
+
             val matched = registry.get().find { endpoint ->
                 endpoint.method.name == request.method().name()
                     && pathMatches(endpoint.path, request.path())
             }
 
             if (matched != null) {
+                log.info("Matched endpoint: {} {} -> {}", matched.method, matched.path, request.path())
                 Mono.just(HandlerFunction { req ->
-                    val dynamicReq = toDynamicRequest(req, matched.path)
-                    val dynamicResp = matched.handler.handle(dynamicReq)
-                    buildServerResponse(dynamicResp)
+                    req.bodyToMono(String::class.java)
+                        .defaultIfEmpty("")
+                        .flatMap { body ->
+                            val dynamicReq = toDynamicRequest(req, matched.path, body.ifEmpty { null })
+
+                            // Log path variables if present
+                            if (dynamicReq.pathVariables.isNotEmpty()) {
+                                log.info("Path variables: {}", dynamicReq.pathVariables)
+                            }
+
+                            // Log query params if present
+                            if (dynamicReq.queryParams.isNotEmpty()) {
+                                log.info("Query params: {}", dynamicReq.queryParams)
+                            }
+
+                            // Log request body if present
+                            if (body.isNotEmpty()) {
+                                log.info("Request body: {} bytes", body.length)
+                                log.debug("Request body content:\n{}", body)
+                            }
+
+                            log.debug("Headers: {}", dynamicReq.headers.keys)
+
+                            val dynamicResp = matched.handler.handle(dynamicReq)
+                            log.info("Returning response: status={}, body type={}",
+                                dynamicResp.status, dynamicResp.body?.javaClass?.simpleName ?: "null")
+                            log.debug("Response body: {}", dynamicResp.body)
+
+                            buildServerResponse(dynamicResp)
+                        }
                 })
             } else {
+                log.debug("No matching endpoint for: {} {}", request.method(), request.path())
                 Mono.empty()
             }
         }

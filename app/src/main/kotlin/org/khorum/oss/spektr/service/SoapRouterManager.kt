@@ -3,6 +3,7 @@ package org.khorum.oss.spektr.service
 import org.khorum.oss.spektr.dsl.SoapEndpointDefinition
 import org.khorum.oss.spektr.dsl.SoapRequest
 import org.khorum.oss.spektr.dsl.SoapResponse
+import org.khorum.oss.spektr.utils.Loggable
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.http.MediaType
@@ -18,7 +19,7 @@ import java.util.concurrent.atomic.AtomicReference
 
 @Component
 @ConditionalOnProperty(name = ["spektr.soap.enabled"], havingValue = "true", matchIfMissing = true)
-class SoapRouterManager {
+class SoapRouterManager : Loggable {
     private val registry = AtomicReference<List<SoapEndpointDefinition>>(emptyList())
 
     companion object {
@@ -32,24 +33,34 @@ class SoapRouterManager {
     @Bean
     fun soapRouterFunction(): RouterFunction<ServerResponse> {
         return RouterFunction { request ->
-            if (!isSoapRequest(request)) return@RouterFunction Mono.empty()
+            if (!isSoapRequest(request)) {
+                log.debug("Not a SOAP request: {} {}", request.method(), request.path())
+                return@RouterFunction Mono.empty()
+            }
 
             val soapAction = extractSoapAction(request)
+            log.debug("Incoming SOAP request: {} {} SOAPAction={}", request.method(), request.path(), soapAction)
+
             val matched = registry.get().find { endpoint ->
                 pathMatches(endpoint.path, request.path()) && endpoint.soapAction == soapAction
             }
 
             if (matched != null) {
+                log.info("Matched SOAP endpoint: {} SOAPAction={} -> {}", matched.path, matched.soapAction, request.path())
                 Mono.just(HandlerFunction { req ->
                     req.bodyToMono(String::class.java)
                         .defaultIfEmpty("")
                         .flatMap { body ->
+                            log.debug("SOAP request body:\n{}", body)
                             val soapReq = toSoapRequest(req, soapAction, body)
                             val soapResp = matched.handler.handle(soapReq)
+                            log.info("Returning SOAP response: status={}", soapResp.status)
+                            log.debug("SOAP response body:\n{}", soapResp.body)
                             buildSoapResponse(soapResp)
                         }
                 })
             } else {
+                log.debug("No matching SOAP endpoint for: {} {} SOAPAction={}", request.method(), request.path(), soapAction)
                 Mono.empty()
             }
         }

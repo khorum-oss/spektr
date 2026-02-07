@@ -36,7 +36,8 @@ class SoapEndpointIntegrationTest {
             .expectStatus().isOk
             .expectHeader().contentTypeCompatibleWith(MediaType.TEXT_XML)
             .expectBody(String::class.java)
-            .value { body ->
+            .value {
+                val body = requireNotNull(it)
                 assert(body.contains("Seattle")) { "Response should contain city name" }
                 assert(body.contains("GetWeatherResponse")) { "Response should contain GetWeatherResponse element" }
                 assert(body.contains("72")) { "Response should contain temperature" }
@@ -61,7 +62,8 @@ class SoapEndpointIntegrationTest {
             .exchange()
             .expectStatus().is5xxServerError
             .expectBody(String::class.java)
-            .value { body ->
+            .value {
+                val body = requireNotNull(it)
                 assert(body.contains("Fault")) { "Response should contain Fault element" }
                 assert(body.contains("soap:Client")) { "Response should contain fault code" }
             }

@@ -1,12 +1,17 @@
-spring:
-  application:
-    name: spektr
 
 endpoint-jars:
   dir: ${ENDPOINT_JARS_DIR:./endpoint-jars}
+
+logging:
+  level:
+    org.khorum.oss.spektr.service: INFO
 
 spektr:
   rest:
     enabled: ${SPEKTR_REST_ENABLED:true}
   soap:
     enabled: ${SPEKTR_SOAP_ENABLED:true}
+
+spring:
+  application:
+    name: spektr

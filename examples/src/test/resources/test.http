@@ -1,12 +1,65 @@
-GET http://localhost:8080/actuator
+@id1 = dbf40fb3-e1bd-4683-8a78-547f054e4d42
+@id2 = 7a99c0dc-64cf-4e0a-948c-1d2a6a191f30
+
+### REFRESH JARS
+
+POST http://localhost:8080/admin/endpoints/reload
+Content-Type: application/json
 Accept: application/json
 
 ###
 
-GET http://localhost:8080/api/house/1234
+GET http://localhost:8080/actuator
+Accept: application/json
+
+### GET 1 BY UUID
+
+GET http://localhost:8080/api/house/{{id1}}
 Content-Type:  application/json
 
-###
+
+### GET 2 BY UUID
+
+GET http://localhost:8080/api/house/{{id2}}
+Content-Type:  application/json
+
+### GET ALL
+
+GET http://localhost:8080/api/house
+Content-Type: application/json
+
+### ADD NON-HAUNTED HOUSE
+
+POST http://localhost:8080/api/house
+Content-Type: application/json
+
+{
+    "isHaunted": false
+}
+
+### GET HAUNTED HOUSES
+
+GET http://localhost:8080/api/house?is-haunted=false
+
+### UPDATE HAUNTED HOUSE 1
+
+PATCH http://localhost:8080/api/house/{{id1}}
+Content-Type: application/json
+
+{
+  "isHaunted": false
+}
+
+### UPDATE HAUNTED HOUSE 2
+PUT http://localhost:8080/api/house
+Content-Type: application/json
+
+{
+    "id": "{{id2}}",
+    "isHaunted": false
+}
+
+### SOAP
 
 POST http://localhost:8080/ws/weather
 Content-Type: text/xml; charset=utf-8
@@ -22,3 +75,9 @@ xmlns:ns="http://example.com/namespace">
     </ns:MyRequest>
   </soap:Body>
 </soap:Envelope>
+
+### SOAP FAULT
+
+POST http://localhost:8080/ws/weather
+Content-Type: text/xml; charset=utf-8
+SOAPAction: "InvalidOperation"
