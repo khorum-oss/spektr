@@ -1,0 +1,36 @@
+name: PR Tests
+run-name: PR Tests for modules by ${{ github.actor }}
+
+on:
+  pull_request:
+    branches:
+      - 'main'
+    types: [opened, synchronize, reopened]
+
+# Cancel in-progress runs for the same PR when new commits are pushed
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    uses: violabs/public-cicd/.github/workflows/gradle-build.yml@main
+    with:
+      java-version: '21'
+      build-tasks: 'classes testClasses'
+
+
+  test-app:
+    needs: build
+    uses: violabs/public-cicd/.github/workflows/gradle-unit-tests.yml@main
+    with:
+      java-version: '21'
+      module: app
+      coverage-enabled: true
+      min-coverage-overall: 80
+
+  detekt:
+    needs: build
+    uses: violabs/public-cicd/.github/workflows/gradle-detekt.yml@main
+    with:
+      java-version: '21'

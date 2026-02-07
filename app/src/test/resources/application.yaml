@@ -1,0 +1,9 @@
+spring:
+  main:
+    web-application-type: reactive
+
+endpoint-jars:
+  dir: ../examples/build/libs
+
+spektr:
+  additional-configs: "classpath:"
