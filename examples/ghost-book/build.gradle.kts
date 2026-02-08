@@ -9,13 +9,15 @@ plugins {
 
 dependencies {
     implementation(project(":dsl"))
+    implementation(project(":examples:common"))
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-web-services")
+    implementation("jakarta.xml.bind:jakarta.xml.bind-api:4.0.2")
+    implementation("org.glassfish.jaxb:jaxb-runtime:4.0.5")
+    implementation("wsdl4j:wsdl4j:1.6.3")
 
-    implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor")
 
     implementation("tools.jackson.module:jackson-module-kotlin")
 

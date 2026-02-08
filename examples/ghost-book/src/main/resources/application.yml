@@ -1,0 +1,15 @@
+
+server:
+  port: 8081
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+
+---
+spring:
+  config:
+    activate:
+      on-profile: integrated

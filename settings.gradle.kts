@@ -5,5 +5,8 @@ include(
     "dsl",
     "examples",
     "examples:ghost-book",
-    "examples:haunted-house-tracker"
+    "examples:ghost-book:test-api",
+    "examples:haunted-house-tracker",
+    "examples:haunted-house-tracker:test-api",
+    "examples:common"
 )

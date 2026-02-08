@@ -9,6 +9,7 @@ plugins {
 
 dependencies {
     implementation(project(":dsl"))
+    implementation(project(":examples:common"))
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
