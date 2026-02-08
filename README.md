@@ -1,4 +1,7 @@
-# Spektr
+<span style="display: flex; align-items: center; justify-content: center;">
+    <img src="assets/spektr-logo-1.png" alt="alt text" width="120" />
+    <h1 style="padding: 0; margin: 0; font-size: 76px">Spektr</h1>
+</span>
 
 A dynamic endpoint server that loads REST and SOAP endpoints from external JAR files at runtime.
 Perfect for creating mock servers and test fixtures.
