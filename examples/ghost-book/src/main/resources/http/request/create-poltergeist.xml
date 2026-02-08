@@ -1,0 +1,8 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <createGhostRequest xmlns="http://org.khorum-oss.com/ghost-book">
+            <type xmlns="">Poltergeist</type>
+            <origin xmlns="">Deutschland</origin>
+        </createGhostRequest>
+    </soap:Body>
+</soap:Envelope>

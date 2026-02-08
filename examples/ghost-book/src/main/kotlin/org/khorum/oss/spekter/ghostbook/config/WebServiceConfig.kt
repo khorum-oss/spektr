@@ -1,11 +1,11 @@
 package org.khorum.oss.spekter.ghostbook.config
 
 import org.khorum.oss.spekter.examples.common.Ghost
-import org.khorum.oss.spekter.examples.common.GhostXsdGenerator
 import org.springframework.boot.web.servlet.ServletRegistrationBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.io.ClassPathResource
 import org.springframework.ws.config.annotation.EnableWs
 import org.springframework.ws.transport.http.MessageDispatcherServlet
 import org.springframework.ws.wsdl.wsdl11.DefaultWsdl11Definition
@@ -14,7 +14,7 @@ import org.springframework.xml.xsd.XsdSchema
 
 @EnableWs
 @Configuration
-class WebServiceConfig : GhostXsdGenerator() {
+class WebServiceConfig {
 
     @Bean
     fun messageDispatcherServlet(applicationContext: ApplicationContext): ServletRegistrationBean<MessageDispatcherServlet> {
@@ -37,7 +37,8 @@ class WebServiceConfig : GhostXsdGenerator() {
 
     @Bean
     fun ghostsSchema(): XsdSchema {
-        // XSD is generated dynamically from JAXB-annotated Ghost classes in the common module
-        return SimpleXsdSchema(getSchemaResource())
+        // XSD is auto-generated at build time from JAXB-annotated Ghost classes
+        // Run: ./gradlew :examples:ghost-book:generateXsd
+        return SimpleXsdSchema(ClassPathResource("xsd/ghosts.xsd"))
     }
 }

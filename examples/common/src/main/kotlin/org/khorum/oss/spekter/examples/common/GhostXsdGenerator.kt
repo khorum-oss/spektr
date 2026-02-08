@@ -4,7 +4,6 @@ import jakarta.xml.bind.JAXBContext
 import jakarta.xml.bind.SchemaOutputResolver
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.core.io.Resource
-import java.io.ByteArrayOutputStream
 import java.io.StringWriter
 import javax.xml.transform.Result
 import javax.xml.transform.stream.StreamResult

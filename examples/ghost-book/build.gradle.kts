@@ -1,10 +1,20 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import jakarta.xml.bind.JAXBContext
+import jakarta.xml.bind.SchemaOutputResolver
+import javax.xml.transform.stream.StreamResult
 
 plugins {
     kotlin("jvm") version "2.3.0"
     kotlin("plugin.spring") version "2.3.0"
     id("org.springframework.boot") version "4.1.0-M1"
     id("io.spring.dependency-management") version "1.1.7"
+}
+
+buildscript {
+    dependencies {
+        classpath("jakarta.xml.bind:jakarta.xml.bind-api:4.0.2")
+        classpath("org.glassfish.jaxb:jaxb-runtime:4.0.5")
+    }
 }
 
 dependencies {
@@ -40,4 +50,25 @@ compileKotlin.compilerOptions {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+// Task to generate XSD from JAXB-annotated Kotlin classes
+tasks.register<JavaExec>("generateXsd") {
+    description = "Generates XSD schema from JAXB-annotated Ghost classes"
+    group = "build"
+
+    dependsOn(":examples:common:classes")
+
+    mainClass.set("org.khorum.oss.spekter.examples.common.XsdGeneratorKt")
+    classpath = project(":examples:common").sourceSets["main"].runtimeClasspath +
+                configurations["runtimeClasspath"]
+
+    args = listOf(
+        file("src/main/resources/xsd/ghosts.xsd").absolutePath
+    )
+}
+
+// Generate XSD before processing resources
+tasks.processResources {
+    dependsOn("generateXsd")
 }
