@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema version="1.0" targetNamespace="http://org.khorum-oss.com/ghost-book" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:import schemaLocation="ghosts.xsd"/>
+
+  <xs:element name="createGhostRequest" type="CreateGhostRequest"/>
+
+  <xs:element name="createGhostResponse" type="CreateGhostResponse"/>
+
+  <xs:element name="getGhostRequest" type="GetGhostRequest"/>
+
+  <xs:element name="listGhostsResponse" type="ListGhostsResponse"/>
+
+
+
+
+</xs:schema>
+
