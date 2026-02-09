@@ -29,6 +29,30 @@ jobs:
       coverage-enabled: true
       min-coverage-overall: 80
 
+  test-examples:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: gradle
+
+      - name: Build Spektr Docker image
+        run: docker build -t spektr:local .
+
+      - name: Build test-api JARs
+        run: |
+          ./gradlew :examples:haunted-house-tracker:test-api:jar \
+                    :examples:ghost-book:test-api:jar
+
+      - name: Run haunted-house-tracker tests
+        run: ./gradlew :examples:haunted-house-tracker:test
+
   detekt:
     needs: build
     uses: violabs/public-cicd/.github/workflows/gradle-detekt.yml@main

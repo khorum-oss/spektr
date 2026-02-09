@@ -6,6 +6,13 @@
 A dynamic endpoint server that loads REST and SOAP endpoints from external JAR files at runtime.
 Perfect for creating mock servers and test fixtures.
 
+## Documentation
+
+See the [docs folder](docs/README.md) for detailed documentation:
+- [Examples Overview](docs/examples.md) - Guide to the example applications
+- [Testing with Testcontainers](docs/testing.md) - Using Spektr as a mock service in tests
+- [Docker Setup](docs/docker.md) - Running Spektr in Docker
+
 ## Features
 
 - **Dynamic endpoint loading** - Load endpoints from JAR files without restarting
