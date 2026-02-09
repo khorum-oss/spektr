@@ -8,7 +8,10 @@ data class HauntedHouse(
     val ghosts: Map<Ghost, GhostReport>
 )
 
+/** A unique type of ghost */
+typealias GhostType = String
+
 data class CreateHauntedHouseRequest(
     val address: Address? = null,
-    val ghosts: Map<Ghost, CreateGhostReportRequest>? = null
+    val ghosts: List<GhostType>? = null
 )

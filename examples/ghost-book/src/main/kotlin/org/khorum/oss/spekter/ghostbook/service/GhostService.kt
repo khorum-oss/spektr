@@ -1,7 +1,6 @@
 package org.khorum.oss.spekter.ghostbook.service
 
 import org.khorum.oss.spekter.examples.common.CreateGhostRequest
-import org.khorum.oss.spekter.examples.common.GetGhostRequest
 import org.khorum.oss.spekter.examples.common.Ghost
 import org.khorum.oss.spekter.ghostbook.repo.GhostRepo
 import org.springframework.stereotype.Service
@@ -13,8 +12,8 @@ class GhostService(
 
     fun create(request: CreateGhostRequest): Ghost {
         val ghost = Ghost(
-            type = requireNotNull(request.type),
-            origin = requireNotNull(request.origin)
+            type = requireNotNull(request.type) { "Ghost type is required" },
+            origin = request.origin
         )
 
         val exists = ghostRepo.getGhost(ghost.type) != null

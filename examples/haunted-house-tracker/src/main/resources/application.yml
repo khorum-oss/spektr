@@ -1,0 +1,23 @@
+
+ghost-book:
+  base-url: ${GHOST_BOOK_BASE_URL:http://localhost:8081}
+  ws:
+    endpoint:
+      uri: ${ghost-book.base-url}/ws
+
+server:
+  port: ${SERVER_PORT:8082}
+
+---
+# This profile is used when running integrations with the Spektr
+spring:
+  config:
+    activate:
+      on-profile: test
+
+---
+# This profile is used when running integrations with the GhostBook API
+spring:
+  config:
+    activate:
+      on-profile: integrated

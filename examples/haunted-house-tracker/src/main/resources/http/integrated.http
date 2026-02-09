@@ -1,0 +1,36 @@
+
+### CREATE HAUNTED HOUSE - NO GHOSTS
+POST localhost:8082/haunted-houses
+Content-Type: application/json
+
+{
+    "address": {
+        "streetLine1": "123 Elm Street",
+        "city": "Minneapolis",
+        "state": "Minnesota",
+        "country": "US",
+        "postalCode": "55408"
+    }
+}
+
+### CREATE HAUNTED HOUSE - 2 NEW GHOSTS
+POST localhost:8082/haunted-houses
+Content-Type: application/json
+
+{
+    "address": {
+        "streetLine1": "123 Elm Street",
+        "city": "Minneapolis",
+        "state": "Minnesota",
+        "country": "US",
+        "postalCode": "55408"
+    },
+    "ghosts": [
+        "OBAKE",
+        "MORAI"
+    ]
+}
+
+### LIST HAUNTED HOUSES
+GET localhost:8082/haunted-houses
+Content-Type: application/json

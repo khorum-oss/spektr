@@ -10,12 +10,13 @@ import jakarta.xml.bind.annotation.XmlType
 @XmlType(name = "Ghost", propOrder = ["type", "origin"])
 data class Ghost(
     @field:XmlElement(required = true)
-    val type: String,
-    @field:XmlElement(required = true)
-    val origin: String
+    val type: String = "",
+    @field:XmlElement(nillable = true)
+    val origin: String? = null
 ) {
     companion object {
         const val NAMESPACE = "http://org.khorum-oss.com/ghost-book"
+        const val PACKAGE = "org.khorum.oss.spekter.examples.common"
     }
 }
 
