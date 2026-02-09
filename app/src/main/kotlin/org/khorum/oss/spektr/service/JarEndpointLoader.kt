@@ -78,10 +78,21 @@ class JarEndpointLoader(
         val jarUrls = jars.map { it.toUri().toURL() }
         val classLoader = URLClassLoader(jarUrls.toTypedArray(), this::class.java.classLoader)
 
-        val modules = ServiceLoader.load(EndpointModule::class.java, classLoader).toList()
+        val modules = mutableListOf<EndpointModule>()
+        try {
+            val serviceLoader = ServiceLoader.load(EndpointModule::class.java, classLoader)
+            for (module in serviceLoader) {
+                log.info("Found EndpointModule: {}", module.javaClass.name)
+                modules.add(module)
+            }
+        } catch (e: Exception) {
+            log.error("Error loading EndpointModule implementations: {}", e.message, e)
+        }
 
         if (modules.isEmpty()) {
             log.warn("No EndpointModule implementations found in {} JARs", jars.size)
+            // Log the JARs being scanned
+            jars.forEach { jar -> log.debug("Scanned JAR: {}", jar) }
         }
 
         if (routerManager != null) {
@@ -92,6 +103,7 @@ class JarEndpointLoader(
             }
             routerManager.updateEndpoints(registry.endpoints)
             log.info("Loaded {} REST endpoints from {} JARs", registry.endpoints.size, jars.size)
+            logRestEndpoints(registry)
         }
 
         if (soapRouterManager != null) {
@@ -102,6 +114,23 @@ class JarEndpointLoader(
             }
             soapRouterManager.updateEndpoints(soapRegistry.endpoints)
             log.info("Loaded {} SOAP endpoints from {} JARs", soapRegistry.endpoints.size, jars.size)
+            logSoapEndpoints(soapRegistry)
+        }
+    }
+
+    private fun logRestEndpoints(registry: EndpointRegistry) {
+        if (registry.endpoints.isEmpty()) return
+        log.info("=== REST Endpoints ===")
+        registry.endpoints.forEach { endpoint ->
+            log.info("  {} {}", endpoint.method, endpoint.path)
+        }
+    }
+
+    private fun logSoapEndpoints(soapRegistry: SoapEndpointRegistry) {
+        if (soapRegistry.endpoints.isEmpty()) return
+        log.info("=== SOAP Endpoints ===")
+        soapRegistry.endpoints.forEach { endpoint ->
+            log.info("  POST {} (SOAPAction: {})", endpoint.path, endpoint.soapAction)
         }
     }
 
