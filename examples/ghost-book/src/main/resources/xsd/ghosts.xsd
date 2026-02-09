@@ -1,17 +1,17 @@
 <?xml version="1.0" standalone="yes"?>
 <xs:schema elementFormDefault="unqualified" version="1.0" targetNamespace="http://org.khorum-oss.com/ghost-book" xmlns="http://org.khorum-oss.com/ghost-book" xmlns:tns="http://org.khorum-oss.com/ghost-book" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:element name="createGhostRequest" type="CreateGhostRequest"/>
+  <xs:element name="CreateGhostRequest" type="CreateGhostRequest"/>
 
-  <xs:element name="createGhostResponse" type="CreateGhostResponse"/>
+  <xs:element name="CreateGhostResponse" type="CreateGhostResponse"/>
 
-  <xs:element name="getGhostRequest" type="GetGhostRequest"/>
+  <xs:element name="GetGhostRequest" type="GetGhostRequest"/>
 
-  <xs:element name="getGhostResponse" type="GetGhostResponse"/>
+  <xs:element name="GetGhostResponse" type="GetGhostResponse"/>
 
-  <xs:element name="listGhostsRequest" type="ListGhostsRequest"/>
+  <xs:element name="ListGhostsRequest" type="ListGhostsRequest"/>
 
-  <xs:element name="listGhostsResponse" type="ListGhostsResponse"/>
+  <xs:element name="ListGhostsResponse" type="ListGhostsResponse"/>
 
   <xs:complexType name="CreateGhostRequest" final="extension restriction">
     <xs:sequence>

@@ -22,7 +22,7 @@ data class Ghost(
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CreateGhostRequest", propOrder = ["type", "origin"])
-@XmlRootElement(name = "createGhostRequest", namespace = Ghost.NAMESPACE)
+@XmlRootElement(name = "CreateGhostRequest", namespace = Ghost.NAMESPACE)
 data class CreateGhostRequest(
     @field:XmlElement(nillable = true)
     val type: String? = null,
@@ -32,15 +32,15 @@ data class CreateGhostRequest(
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CreateGhostResponse", propOrder = ["ghost"])
-@XmlRootElement(name = "createGhostResponse", namespace = Ghost.NAMESPACE)
+@XmlRootElement(name = "CreateGhostResponse", namespace = Ghost.NAMESPACE)
 data class CreateGhostResponse(
     @field:XmlElement(required = true)
-    val ghost: Ghost = Ghost("", "")
+    val ghost: Ghost = Ghost("")
 )
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetGhostRequest", propOrder = ["type"])
-@XmlRootElement(name = "getGhostRequest", namespace = Ghost.NAMESPACE)
+@XmlRootElement(name = "GetGhostRequest", namespace = Ghost.NAMESPACE)
 data class GetGhostRequest(
     @field:XmlElement(required = true)
     val type: String = ""
@@ -48,7 +48,7 @@ data class GetGhostRequest(
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetGhostResponse", propOrder = ["ghost"])
-@XmlRootElement(name = "getGhostResponse", namespace = Ghost.NAMESPACE)
+@XmlRootElement(name = "GetGhostResponse", namespace = Ghost.NAMESPACE)
 data class GetGhostResponse(
     @field:XmlElement(required = false)
     val ghost: Ghost? = null
@@ -56,12 +56,12 @@ data class GetGhostResponse(
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ListGhostsRequest")
-@XmlRootElement(name = "listGhostsRequest", namespace = Ghost.NAMESPACE)
+@XmlRootElement(name = "ListGhostsRequest", namespace = Ghost.NAMESPACE)
 class ListGhostsRequest  // no fields needed, but you could add filters here
 
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ListGhostsResponse", propOrder = ["ghosts"])
-@XmlRootElement(name = "listGhostsResponse", namespace = Ghost.NAMESPACE)
+@XmlRootElement(name = "ListGhostsResponse", namespace = Ghost.NAMESPACE)
 data class ListGhostsResponse(
     @field:XmlElement(name = "ghost")
     val ghosts: List<Ghost> = emptyList()

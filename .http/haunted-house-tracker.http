@@ -1,6 +1,8 @@
+# localhost $
+@hauntedHousesUri = http://localhost:{{hauntedHouseTrackerPort}}/haunted-houses
 
 ### CREATE HAUNTED HOUSE - NO GHOSTS
-POST localhost:8082/haunted-houses
+POST {{hauntedHousesUri}}
 Content-Type: application/json
 
 {
@@ -14,7 +16,7 @@ Content-Type: application/json
 }
 
 ### CREATE HAUNTED HOUSE - 2 NEW GHOSTS
-POST localhost:8082/haunted-houses
+POST {{hauntedHousesUri}}
 Content-Type: application/json
 
 {
@@ -26,11 +28,24 @@ Content-Type: application/json
         "postalCode": "55408"
     },
     "ghosts": [
-        "OBAKE",
-        "MORAI"
+        "Obake",
+        "Morai"
     ]
 }
 
 ### LIST HAUNTED HOUSES
-GET localhost:8082/haunted-houses
+GET {{hauntedHousesUri}}
 Content-Type: application/json
+
+
+
+### DOCKER SPEKTR INTEGRATION TEST
+### RELOAD
+POST http://localhost:{{dockerPort}}/admin/endpoints/reload
+
+### GET GHOST BY TYPE
+POST http://localhost:{{dockerPort}}/ws
+Content-Type: text/xml
+SOAPAction: GetGhost
+
+< request/get-yurei.xml

@@ -86,9 +86,19 @@ class SoapRouterManager : Loggable {
         val builder = ServerResponse.status(resp.status)
         resp.headers.forEach { (k, v) -> builder.header(k, v) }
         return when (val body = resp.body) {
-            null -> builder.contentType(TEXT_XML).build()
-            else -> builder.contentType(TEXT_XML).bodyValue(body)
+            null -> builder.contentType(TEXT_XML).bodyValue(wrapInEnvelope(""))
+            else -> builder.contentType(TEXT_XML).bodyValue(wrapInEnvelope(body))
         }
+    }
+
+    private fun wrapInEnvelope(body: String): String {
+        return """<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+  <SOAP-ENV:Header/>
+  <SOAP-ENV:Body>
+    $body
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>"""
     }
 
     private fun pathMatches(pattern: String, actual: String): Boolean {

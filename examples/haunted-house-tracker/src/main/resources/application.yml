@@ -15,6 +15,9 @@ spring:
     activate:
       on-profile: test
 
+ghost-book:
+  base-url: http://localhost:8083
+
 ---
 # This profile is used when running integrations with the GhostBook API
 spring:

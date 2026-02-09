@@ -1,6 +1,0 @@
-### GET GHOST BY TYPE
-POST http://localhost:8083/ws
-Content-Type: text/xml
-SOAPAction: GetGhost
-
-< request/get-yurei.xml

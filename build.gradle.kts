@@ -45,3 +45,23 @@ detekt {
 	baseline = file("$rootDir/detekt-baseline.xml")
 	parallel = true
 }
+
+// Task to copy test-api JARs to docker endpoint-jars folder
+tasks.register<Copy>("copyTestApisToDocker") {
+	group = "docker"
+	description = "Copies test-api JARs to examples/docker/endpoint-jars"
+
+	dependsOn(
+		":examples:haunted-house-tracker:test-api:jar",
+		":examples:ghost-book:test-api:jar"
+	)
+
+	from("examples/haunted-house-tracker/test-api/build/libs") {
+		include("*.jar")
+	}
+	from("examples/ghost-book/test-api/build/libs") {
+		include("*.jar")
+	}
+
+	into("examples/docker/endpoint-jars")
+}

@@ -1,27 +1,37 @@
+@ghostsUri = http://localhost:{{ghostTrackerPort}}/ws
+
 ### CREATE GHOST (Yurei)
-POST http://localhost:8081/ws
+POST {{ghostsUri}}
 Content-Type: text/xml
 
 < request/create-yurei.xml
 
 ### CREATE GHOST (inline)
-POST http://localhost:8081/ws
+POST {{ghostsUri}}
 Content-Type: text/xml
 
 < request/create-poltergeist.xml
 
 ### LIST ALL GHOSTS
-POST http://localhost:8081/ws
+POST {{ghostsUri}}
 Content-Type: text/xml
 
 < request/list-ghosts.xml
 
 ### GET GHOST BY TYPE
-POST http://localhost:8081/ws
+POST {{ghostsUri}}
 Content-Type: text/xml
 SOAPAction: GetGhost
 
 < request/get-yurei.xml
 
 ### GET WSDL
-GET http://localhost:8081/ws/ghosts.wsdl
+GET {{ghostsUri}}/ghosts.wsdl
+
+
+### DOCKER SPEKTR INTEGRATION TEST
+
+@houseId = {{$random.uuid}}
+
+### GET HOUSE BY ID
+GET http://localhost:{{dockerPort}}/haunted-houses/{{houseId}}
