@@ -1,7 +1,5 @@
 <?xml version="1.0" standalone="yes"?>
-<xs:schema version="1.0" targetNamespace="http://org.khorum-oss.com/ghost-book"
-           xmlns="http://org.khorum-oss.com/ghost-book"
-           xmlns:xs="http://www.w3.org/2001/XMLSchema">
+<xs:schema elementFormDefault="unqualified" version="1.0" targetNamespace="http://org.khorum-oss.com/ghost-book" xmlns="http://org.khorum-oss.com/ghost-book" xmlns:tns="http://org.khorum-oss.com/ghost-book" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:element name="createGhostRequest" type="CreateGhostRequest"/>
 

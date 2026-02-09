@@ -1,0 +1,23 @@
+services:
+  spektr:
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+    image: spektr:local
+    container_name: spektr-app
+    ports:
+      - "8083:8080"
+    environment:
+      - JAVA_OPTS=-Xmx512m -Xms256m
+      - ENDPOINT_JARS_DIR=/app/endpoint-jars
+      - SPEKTR_REST_ENABLED=true
+      - SPEKTR_SOAP_ENABLED=true
+    volumes:
+      # Mount local endpoint JARs for testing
+      - ./endpoint-jars:/app/endpoint-jars
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s

@@ -10,6 +10,10 @@ plugins {
 
 group = "org.khorum.oss"
 
+// Root project is not a Spring Boot application
+tasks.bootJar { enabled = false }
+tasks.jar { enabled = false }
+
 repositories {
 	mavenCentral()
 }

@@ -7,6 +7,7 @@ import org.khorum.oss.spekter.examples.common.Ghost
 import org.khorum.oss.spekter.examples.common.GhostReport
 import org.khorum.oss.spekter.examples.common.GhostType
 import org.khorum.oss.spekter.examples.common.HauntedHouse
+import org.khorum.oss.spekter.examples.common.Loggable
 import org.khorum.oss.spektr.hauntedhousetracker.client.GhostSoapClient
 import org.khorum.oss.spektr.hauntedhousetracker.repo.HauntedHouseRepo
 import org.springframework.stereotype.Service
@@ -16,8 +17,9 @@ import java.util.UUID
 class HauntedHouseService(
     private val ghostSoapClient: GhostSoapClient,
     private val hauntedHouseRepo: HauntedHouseRepo
-) {
+) : Loggable {
     suspend fun createHauntedHouse(request: CreateHauntedHouseRequest): HauntedHouse {
+        log.info { "Creating haunted house: $request" }
         val proposedGhostTypes: List<GhostType> = request.ghosts ?: emptyList()
 
         val existingGhosts: List<Ghost> = proposedGhostTypes.mapNotNull {
@@ -26,13 +28,27 @@ class HauntedHouseService(
 
         val existingGhostTypes: List<GhostType> = existingGhosts.map { it.type }
 
+        if (existingGhostTypes.isNotEmpty()) {
+            log.info { "Existing ghosts: $existingGhostTypes" }
+        }
+
         val newGhostTypes: List<GhostType> = proposedGhostTypes.filter {
             ghostType -> ghostType !in existingGhostTypes
+        }
+
+        if (newGhostTypes.isNotEmpty()) {
+            log.info { "New ghosts: $newGhostTypes" }
         }
 
         val newGhosts: List<Ghost> = newGhostTypes
             .map { CreateGhostRequest(type = it) }
             .map { ghostSoapClient.createGhost(it) }
+
+        if (newGhosts.isEmpty()) {
+            log.info { "No new ghosts were created" }
+        } else {
+            log.info { "New ghosts were created: $newGhosts" }
+        }
 
         val allGhosts: List<Ghost> = existingGhosts + newGhosts
 
@@ -47,6 +63,8 @@ class HauntedHouseService(
         )
 
         hauntedHouseRepo.saveGhost(newHauntedHouse)
+
+        log.info { "Created haunted house: $newHauntedHouse" }
 
         return newHauntedHouse
     }

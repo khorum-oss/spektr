@@ -15,7 +15,7 @@ private val log = LoggerFactory.getLogger(GhostSoapClientConfig::class.java)
 
 @Configuration
 class GhostSoapClientConfig(
-    @Value("\${ghost-book.ws.endpoint.uri}")
+    @Value($$"${ghost-book.ws.endpoint.uri}")
     private val ghostBookEndpointUri: String
 ) {
 

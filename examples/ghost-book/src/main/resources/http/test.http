@@ -1,0 +1,5 @@
+### GET GHOST BY TYPE
+POST http://localhost:8083/ws
+Content-Type: text/xml
+
+< request/get-yurei.xml
