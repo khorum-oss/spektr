@@ -13,11 +13,18 @@ COPY settings.gradle.kts .
 COPY app/build.gradle.kts app/
 COPY dsl/build.gradle.kts dsl/
 
-# Create empty examples module (required by settings.gradle.kts)
-RUN mkdir -p examples/src/main/kotlin && echo "" > examples/build.gradle.kts
+# Create stub modules required by settings.gradle.kts (we only build app)
+RUN mkdir -p examples examples/common examples/ghost-book examples/ghost-book/test-api \
+    examples/haunted-house-tracker examples/haunted-house-tracker/test-api && \
+    printf 'tasks.bootJar { enabled = false }\ntasks.jar { enabled = true }\n' > examples/build.gradle.kts && \
+    printf 'tasks.bootJar { enabled = false }\ntasks.jar { enabled = true }\n' > examples/common/build.gradle.kts && \
+    printf 'tasks.bootJar { enabled = false }\n' > examples/ghost-book/build.gradle.kts && \
+    touch examples/ghost-book/test-api/build.gradle.kts && \
+    printf 'tasks.bootJar { enabled = false }\n' > examples/haunted-house-tracker/build.gradle.kts && \
+    touch examples/haunted-house-tracker/test-api/build.gradle.kts
 
 # Download dependencies (cached layer)
-RUN chmod +x gradlew && ./gradlew dependencies --no-daemon || true
+RUN chmod +x gradlew && ./gradlew :app:dependencies --no-daemon || true
 
 # Copy source code
 COPY dsl/src dsl/src

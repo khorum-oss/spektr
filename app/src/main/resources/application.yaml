@@ -15,3 +15,5 @@ spektr:
 spring:
   application:
     name: spektr
+  main:
+    web-application-type: reactive

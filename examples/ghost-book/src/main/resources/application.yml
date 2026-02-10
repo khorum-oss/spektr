@@ -1,0 +1,17 @@
+
+server:
+  port: ${SERVER_PORT:8081}
+
+---
+# This profile is used when running integrations with the Spektr
+spring:
+  config:
+    activate:
+      on-profile: test
+
+---
+# This profile is used when running integrations with the HauntedHouse API
+spring:
+  config:
+    activate:
+      on-profile: integrated

@@ -1,0 +1,7 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <getGhostRequest xmlns="http://org.khorum-oss.com/ghost-book">
+            <type xmlns="">Yurei</type>
+        </getGhostRequest>
+    </soap:Body>
+</soap:Envelope>

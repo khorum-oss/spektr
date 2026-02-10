@@ -1,0 +1,5 @@
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <listGhostsRequest xmlns="http://org.khorum-oss.com/ghost-book"/>
+    </soap:Body>
+</soap:Envelope>

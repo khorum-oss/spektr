@@ -1,0 +1,7 @@
+Ghost
+CreateGhostRequest
+CreateGhostResponse
+GetGhostRequest
+GetGhostResponse
+ListGhostsRequest
+ListGhostsResponse
