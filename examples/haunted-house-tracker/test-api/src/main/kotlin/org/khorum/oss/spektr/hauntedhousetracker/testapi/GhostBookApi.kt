@@ -1,15 +1,10 @@
 package org.khorum.oss.spektr.hauntedhousetracker.testapi
 
 import org.khorum.oss.spektr.dsl.EndpointModule
-import org.khorum.oss.spektr.dsl.EndpointRegistry
 import org.khorum.oss.spektr.dsl.SoapEndpointRegistry
 import org.khorum.oss.spektr.dsl.SoapResponse
 
-class GhostApi : EndpointModule {
-    override fun EndpointRegistry.configure() {
-
-    }
-
+class GhostBookApi : EndpointModule {
     override fun SoapEndpointRegistry.configureSoap() {
         // Create ghost - use ns: prefix for root only (UNQUALIFIED element form)
         operation("/ws", "CreateGhost") { request ->

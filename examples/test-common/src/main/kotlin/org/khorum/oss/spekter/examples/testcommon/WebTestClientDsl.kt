@@ -1,4 +1,4 @@
-package org.khorum.oss.spektr.hauntesthousetracker
+package org.khorum.oss.spekter.examples.testcommon
 
 import org.springframework.http.MediaType
 import org.springframework.test.web.reactive.server.JsonPathAssertions

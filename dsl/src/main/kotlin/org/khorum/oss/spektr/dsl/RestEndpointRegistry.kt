@@ -1,6 +1,6 @@
 package org.khorum.oss.spektr.dsl
 
-class EndpointRegistry {
+class RestEndpointRegistry {
     private val endpointList = mutableListOf<EndpointDefinition>()
     val endpoints: List<EndpointDefinition> get() = endpointList
 
@@ -12,8 +12,10 @@ class EndpointRegistry {
     fun options(path: String, handler: DynamicHandler) = register(HttpMethod.OPTIONS, path, handler)
 
     fun returnBody(body: Any?): DynamicResponse = DynamicResponse(body = body)
-
     fun returnStatus(status: Int): DynamicResponse = DynamicResponse(status = status)
+    fun returnResponse(scope: DynamicResponse.Builder.() -> Unit): DynamicResponse {
+        return DynamicResponse.Builder().apply(scope).build()
+    }
 
     private fun register(method: HttpMethod, path: String, handler: DynamicHandler) {
         endpointList.add(EndpointDefinition(method, path, handler))
@@ -35,6 +37,6 @@ class EndpointRegistry {
     }
 }
 
-fun endpoints(block: EndpointRegistry.() -> Unit): EndpointRegistry {
-    return EndpointRegistry().apply(block)
+fun endpoints(block: RestEndpointRegistry.() -> Unit): RestEndpointRegistry {
+    return RestEndpointRegistry().apply(block)
 }

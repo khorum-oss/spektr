@@ -2,7 +2,7 @@ package org.khorum.oss.spektr.service
 
 import jakarta.annotation.PostConstruct
 import org.khorum.oss.spektr.dsl.EndpointModule
-import org.khorum.oss.spektr.dsl.EndpointRegistry
+import org.khorum.oss.spektr.dsl.RestEndpointRegistry
 import org.khorum.oss.spektr.dsl.SoapEndpointRegistry
 import org.khorum.oss.spektr.utils.Loggable
 import org.springframework.beans.factory.annotation.Value
@@ -38,7 +38,7 @@ class JarEndpointLoader(
         val modules = ServiceLoader.load(EndpointModule::class.java, classLoader).toList()
 
         val restCount = if (routerManager != null) {
-            val registry = EndpointRegistry()
+            val registry = RestEndpointRegistry()
             modules.forEach { module -> with(module) { registry.configure() } }
             routerManager.updateEndpoints(registry.endpoints)
             log.info("Loaded {} REST endpoints from {} JARs", registry.endpoints.size, jars.size)
@@ -96,7 +96,7 @@ class JarEndpointLoader(
         }
 
         if (routerManager != null) {
-            val registry = EndpointRegistry()
+            val registry = RestEndpointRegistry()
             modules.forEach { module ->
                 log.info("Loading REST endpoints from {}", module.javaClass.name)
                 with(module) { registry.configure() }
@@ -118,7 +118,7 @@ class JarEndpointLoader(
         }
     }
 
-    private fun logRestEndpoints(registry: EndpointRegistry) {
+    private fun logRestEndpoints(registry: RestEndpointRegistry) {
         if (registry.endpoints.isEmpty()) return
         log.info("=== REST Endpoints ===")
         registry.endpoints.forEach { endpoint ->

@@ -1,5 +1,9 @@
 import java.io.File
 
+plugins {
+    id("com.gradleup.shadow") version "9.3.1"
+}
+
 val versionFile = file("version.txt")
 val currentVersion = versionFile.readText().trim()
 version = currentVersion
@@ -15,11 +19,11 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 }
 
-tasks.bootJar { enabled = false }
-
-tasks.jar {
-    enabled = true
+tasks.shadowJar {
+    archiveClassifier.set("")
     archiveFileName.set("$jarBaseName-$version.jar")
+    exclude("org/khorum/oss/spektr/dsl/**")
+    mergeServiceFiles()
 
     doLast {
         // Remove old versions of this JAR from docker folder
@@ -39,4 +43,10 @@ tasks.jar {
         versionFile.writeText(newVersion)
         println("Version incremented: $currentVersion -> $newVersion")
     }
+}
+
+tasks.bootJar { enabled = false }
+
+tasks.jar {
+    enabled = false
 }

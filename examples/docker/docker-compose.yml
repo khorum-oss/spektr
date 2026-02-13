@@ -1,3 +1,5 @@
+name: spektr-example-test
+
 services:
   spektr:
     build:

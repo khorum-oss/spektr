@@ -1,7 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import jakarta.xml.bind.JAXBContext
-import jakarta.xml.bind.SchemaOutputResolver
-import javax.xml.transform.stream.StreamResult
 
 plugins {
     kotlin("jvm") version "2.3.0"
@@ -43,7 +40,9 @@ dependencies {
     testImplementation("io.projectreactor:reactor-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
+
 val compileKotlin: KotlinCompile by tasks
+
 compileKotlin.compilerOptions {
     freeCompilerArgs.set(listOf("-Xannotation-default-target=param-property"))
 }
@@ -61,7 +60,7 @@ tasks.register<JavaExec>("generateXsd") {
 
     mainClass.set("org.khorum.oss.spekter.examples.common.XsdGeneratorKt")
     classpath = project(":examples:common").sourceSets["main"].runtimeClasspath +
-                configurations["runtimeClasspath"]
+        configurations["runtimeClasspath"]
 
     args = listOf(
         file("src/main/resources/xsd/ghosts.xsd").absolutePath
