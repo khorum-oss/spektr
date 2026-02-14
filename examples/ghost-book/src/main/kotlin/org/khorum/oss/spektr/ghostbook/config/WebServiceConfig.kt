@@ -1,6 +1,6 @@
-package org.khorum.oss.spekter.ghostbook.config
+package org.khorum.oss.spektr.ghostbook.config
 
-import org.khorum.oss.spekter.examples.common.Ghost
+import org.khorum.oss.spekter.examples.common.domain.Ghost
 import org.springframework.boot.web.servlet.ServletRegistrationBean
 import org.springframework.context.ApplicationContext
 import org.springframework.context.annotation.Bean

@@ -1,8 +1,8 @@
 package org.khorum.oss.spektr.hauntesthousetracker
 
 import org.junit.jupiter.api.Test
-import org.khorum.oss.spekter.examples.common.CreateHauntedHouseRequest
-import org.khorum.oss.spekter.examples.common.UsAddress
+import org.khorum.oss.spekter.examples.common.domain.CreateHauntedHouseRequest
+import org.khorum.oss.spekter.examples.common.domain.UsAddress
 import org.khorum.oss.spekter.examples.testcommon.TestClient
 import org.khorum.oss.spekter.examples.testcommon.WithSpektr
 import org.khorum.oss.spekter.examples.testcommon.configureShared

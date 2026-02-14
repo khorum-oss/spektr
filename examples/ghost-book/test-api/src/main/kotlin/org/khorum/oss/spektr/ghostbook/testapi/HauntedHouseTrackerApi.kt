@@ -1,10 +1,10 @@
 package org.khorum.oss.spektr.ghostbook.testapi
 
-import org.khorum.oss.spekter.examples.common.CreateHauntedHouseRequest
-import org.khorum.oss.spekter.examples.common.Ghost
-import org.khorum.oss.spekter.examples.common.GhostReport
-import org.khorum.oss.spekter.examples.common.HauntedHouse
-import org.khorum.oss.spekter.examples.common.UsAddress
+import org.khorum.oss.spekter.examples.common.domain.CreateHauntedHouseRequest
+import org.khorum.oss.spekter.examples.common.domain.Ghost
+import org.khorum.oss.spekter.examples.common.domain.GhostReport
+import org.khorum.oss.spekter.examples.common.domain.HauntedHouse
+import org.khorum.oss.spekter.examples.common.domain.UsAddress
 import org.khorum.oss.spektr.dsl.EndpointModule
 import org.khorum.oss.spektr.dsl.RestEndpointRegistry
 import tools.jackson.databind.ObjectMapper

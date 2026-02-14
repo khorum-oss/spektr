@@ -1,4 +1,4 @@
-package org.khorum.oss.spekter.ghostbook
+package org.khorum.oss.spektr.ghostbook
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

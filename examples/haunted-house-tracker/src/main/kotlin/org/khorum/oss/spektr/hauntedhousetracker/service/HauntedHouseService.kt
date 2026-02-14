@@ -1,12 +1,12 @@
 package org.khorum.oss.spektr.hauntedhousetracker.service
 
-import org.khorum.oss.spekter.examples.common.Address
-import org.khorum.oss.spekter.examples.common.CreateGhostRequest
-import org.khorum.oss.spekter.examples.common.CreateHauntedHouseRequest
-import org.khorum.oss.spekter.examples.common.Ghost
-import org.khorum.oss.spekter.examples.common.GhostReport
-import org.khorum.oss.spekter.examples.common.GhostType
-import org.khorum.oss.spekter.examples.common.HauntedHouse
+import org.khorum.oss.spekter.examples.common.domain.Address
+import org.khorum.oss.spekter.examples.common.domain.CreateGhostRequest
+import org.khorum.oss.spekter.examples.common.domain.CreateHauntedHouseRequest
+import org.khorum.oss.spekter.examples.common.domain.Ghost
+import org.khorum.oss.spekter.examples.common.domain.GhostReport
+import org.khorum.oss.spekter.examples.common.domain.GhostType
+import org.khorum.oss.spekter.examples.common.domain.HauntedHouse
 import org.khorum.oss.spekter.examples.common.Loggable
 import org.khorum.oss.spektr.hauntedhousetracker.client.GhostSoapClient
 import org.khorum.oss.spektr.hauntedhousetracker.repo.HauntedHouseRepo

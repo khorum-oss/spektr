@@ -1,6 +1,6 @@
-package org.khorum.oss.spekter.ghostbook.repo
+package org.khorum.oss.spektr.ghostbook.repo
 
-import org.khorum.oss.spekter.examples.common.Ghost
+import org.khorum.oss.spekter.examples.common.domain.Ghost
 import org.khorum.oss.spekter.examples.common.Loggable
 import org.springframework.stereotype.Component
 

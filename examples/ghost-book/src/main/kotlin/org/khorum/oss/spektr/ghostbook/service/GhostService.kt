@@ -1,8 +1,8 @@
-package org.khorum.oss.spekter.ghostbook.service
+package org.khorum.oss.spektr.ghostbook.service
 
-import org.khorum.oss.spekter.examples.common.CreateGhostRequest
-import org.khorum.oss.spekter.examples.common.Ghost
-import org.khorum.oss.spekter.ghostbook.repo.GhostRepo
+import org.khorum.oss.spekter.examples.common.domain.CreateGhostRequest
+import org.khorum.oss.spekter.examples.common.domain.Ghost
+import org.khorum.oss.spektr.ghostbook.repo.GhostRepo
 import org.springframework.stereotype.Service
 
 @Service

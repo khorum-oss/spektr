@@ -1,4 +1,4 @@
-package org.khorum.oss.spekter.examples.common
+package org.khorum.oss.spekter.examples.common.domain
 
 data class GhostReport(
     val numberOfGhosts: Int,

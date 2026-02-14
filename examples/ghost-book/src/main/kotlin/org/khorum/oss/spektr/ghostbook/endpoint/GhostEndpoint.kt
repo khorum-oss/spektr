@@ -1,13 +1,13 @@
-package org.khorum.oss.spekter.ghostbook.endpoint
+package org.khorum.oss.spektr.ghostbook.endpoint
 
-import org.khorum.oss.spekter.examples.common.CreateGhostRequest
-import org.khorum.oss.spekter.examples.common.CreateGhostResponse
-import org.khorum.oss.spekter.examples.common.GetGhostRequest
-import org.khorum.oss.spekter.examples.common.GetGhostResponse
-import org.khorum.oss.spekter.examples.common.Ghost
-import org.khorum.oss.spekter.examples.common.ListGhostsRequest
-import org.khorum.oss.spekter.examples.common.ListGhostsResponse
-import org.khorum.oss.spekter.ghostbook.service.GhostService
+import org.khorum.oss.spekter.examples.common.domain.CreateGhostRequest
+import org.khorum.oss.spekter.examples.common.domain.CreateGhostResponse
+import org.khorum.oss.spekter.examples.common.domain.GetGhostRequest
+import org.khorum.oss.spekter.examples.common.domain.GetGhostResponse
+import org.khorum.oss.spekter.examples.common.domain.Ghost
+import org.khorum.oss.spekter.examples.common.domain.ListGhostsRequest
+import org.khorum.oss.spekter.examples.common.domain.ListGhostsResponse
+import org.khorum.oss.spektr.ghostbook.service.GhostService
 import org.springframework.ws.server.endpoint.annotation.Endpoint
 import org.springframework.ws.server.endpoint.annotation.PayloadRoot
 import org.springframework.ws.server.endpoint.annotation.RequestPayload

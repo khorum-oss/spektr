@@ -1,7 +1,7 @@
 package org.khorum.oss.spektr.hauntedhousetracker.controller
 
-import org.khorum.oss.spekter.examples.common.CreateHauntedHouseRequest
-import org.khorum.oss.spekter.examples.common.HauntedHouse
+import org.khorum.oss.spekter.examples.common.domain.CreateHauntedHouseRequest
+import org.khorum.oss.spekter.examples.common.domain.HauntedHouse
 import org.khorum.oss.spektr.hauntedhousetracker.service.HauntedHouseService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
