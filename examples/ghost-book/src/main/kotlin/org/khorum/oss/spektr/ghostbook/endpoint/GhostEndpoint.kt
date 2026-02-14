@@ -1,5 +1,6 @@
 package org.khorum.oss.spektr.ghostbook.endpoint
 
+import kotlinx.coroutines.runBlocking
 import org.khorum.oss.spekter.examples.common.domain.CreateGhostRequest
 import org.khorum.oss.spekter.examples.common.domain.CreateGhostResponse
 import org.khorum.oss.spekter.examples.common.domain.GetGhostRequest
@@ -20,21 +21,20 @@ class GhostEndpoint(
 
     @ResponsePayload
     @PayloadRoot(namespace = Ghost.NAMESPACE, localPart = "createGhostRequest")
-    suspend fun createGhost(@RequestPayload request: CreateGhostRequest): CreateGhostResponse {
-        return ghostService.create(request)
+    fun createGhost(@RequestPayload request: CreateGhostRequest): CreateGhostResponse = runBlocking {
+        ghostService.create(request)
     }
-
 
     @PayloadRoot(namespace = Ghost.NAMESPACE, localPart = "getGhostRequest")
     @ResponsePayload
-    suspend fun getGhost(@RequestPayload request: GetGhostRequest): GetGhostResponse {
-        val ghost = ghostService.findByType(request.type)
+    fun getGhost(@RequestPayload request: GetGhostRequest): GetGhostResponse? = runBlocking {
+        ghostService.findByType(request)
     }
 
     @PayloadRoot(namespace = Ghost.NAMESPACE, localPart = "listGhostsRequest")
     @ResponsePayload
-    suspend fun listGhosts(@RequestPayload request: ListGhostsRequest): ListGhostsResponse {
-        val ghosts = ghostService.findAll()
-        return ListGhostsResponse(ghosts = ghosts.toList())
+    fun listGhosts(@RequestPayload request: ListGhostsRequest): ListGhostsResponse = runBlocking {
+        val ghosts = ghostService.findAll(request.includeHouses)
+        ListGhostsResponse(ghosts = ghosts.toList())
     }
 }

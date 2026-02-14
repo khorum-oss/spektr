@@ -2,6 +2,8 @@ package org.khorum.oss.spekter.examples.common.domain
 
 import com.fasterxml.jackson.annotation.JsonSubTypes
 import com.fasterxml.jackson.annotation.JsonTypeInfo
+import jakarta.xml.bind.annotation.XmlAccessType
+import jakarta.xml.bind.annotation.XmlAccessorType
 import jakarta.xml.bind.annotation.XmlElement
 import jakarta.xml.bind.annotation.XmlRootElement
 import jakarta.xml.bind.annotation.XmlSeeAlso
@@ -44,58 +46,61 @@ sealed interface Address {
 }
 
 @XmlRootElement(name = "usAddress")
-@XmlType(name = "UsAddressType")
+@XmlType(name = "UsAddressType", propOrder = ["streetLine1", "streetLine2", "city", "state", "postalCode", "country"])
+@XmlAccessorType(XmlAccessType.FIELD)
 data class UsAddress(
-    @get:XmlElement(required = true)
-    override val streetLine1: String,
-    @get:XmlElement
+    @field:XmlElement(required = true)
+    override val streetLine1: String = "",
+    @field:XmlElement
     override val streetLine2: String? = null,
-    @get:XmlElement(required = true)
-    override val city: String,
-    @get:XmlElement(required = true)
-    val state: String,
-    @get:XmlElement(required = true)
-    override val postalCode: String,
-    @get:XmlElement(required = true)
+    @field:XmlElement(required = true)
+    override val city: String = "",
+    @field:XmlElement(required = true)
+    val state: String = "",
+    @field:XmlElement(required = true)
+    override val postalCode: String = "",
+    @field:XmlElement(required = true)
     override val country: String = "US"
 ) : Address {
     override fun stateOrProvince(): String = state
 }
 
 @XmlRootElement(name = "caAddress")
-@XmlType(name = "CaAddressType")
+@XmlType(name = "CaAddressType", propOrder = ["streetLine1", "streetLine2", "city", "province", "postalCode", "country"])
+@XmlAccessorType(XmlAccessType.FIELD)
 data class CaAddress(
-    @get:XmlElement(required = true)
-    override val streetLine1: String,
-    @get:XmlElement
+    @field:XmlElement(required = true)
+    override val streetLine1: String = "",
+    @field:XmlElement
     override val streetLine2: String? = null,
-    @get:XmlElement(required = true)
-    override val city: String,
-    @get:XmlElement(required = true)
-    val province: String,
-    @get:XmlElement(required = true)
-    override val postalCode: String,
-    @get:XmlElement(required = true)
+    @field:XmlElement(required = true)
+    override val city: String = "",
+    @field:XmlElement(required = true)
+    val province: String = "",
+    @field:XmlElement(required = true)
+    override val postalCode: String = "",
+    @field:XmlElement(required = true)
     override val country: String = "CA"
 ) : Address {
     override fun stateOrProvince(): String = province
 }
 
 @XmlRootElement(name = "genericAddress")
-@XmlType(name = "GenericAddressType")
+@XmlType(name = "GenericAddressType", propOrder = ["streetLine1", "streetLine2", "city", "region", "postalCode", "country"])
+@XmlAccessorType(XmlAccessType.FIELD)
 data class GenericAddress(
-    @get:XmlElement(required = true)
-    override val streetLine1: String,
-    @get:XmlElement
+    @field:XmlElement(required = true)
+    override val streetLine1: String = "",
+    @field:XmlElement
     override val streetLine2: String? = null,
-    @get:XmlElement(required = true)
-    override val city: String,
-    @get:XmlElement(required = true)
+    @field:XmlElement(required = true)
+    override val city: String = "",
+    @field:XmlElement
     val region: String? = null,
-    @get:XmlElement(required = true)
-    override val postalCode: String,
-    @get:XmlElement(required = true)
-    override val country: String
+    @field:XmlElement(required = true)
+    override val postalCode: String = "",
+    @field:XmlElement(required = true)
+    override val country: String = ""
 ) : Address {
     override fun stateOrProvince(): String? = region
 }

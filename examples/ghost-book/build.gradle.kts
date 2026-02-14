@@ -34,8 +34,12 @@ dependencies {
 
     implementation("io.github.microutils:kotlin-logging:4.0.0-beta-2")
 
+    testImplementation(project(":examples:test-common"))
     testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux-test")
+    testImplementation("org.springframework.boot:spring-boot-testcontainers")
+    testImplementation("org.testcontainers:testcontainers:2.0.2")
+    testImplementation("org.testcontainers:junit-jupiter:1.21.3")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
@@ -49,8 +53,33 @@ compileKotlin.compilerOptions {
     freeCompilerArgs.set(listOf("-Xannotation-default-target=param-property"))
 }
 
+// Task to build the Spektr Docker image
+tasks.register<Exec>("buildSpektrImage") {
+    group = "docker"
+    description = "Builds the spektr:local Docker image"
+    workingDir = rootProject.projectDir
+    commandLine("docker", "build", "-t", "spektr:local", ".")
+
+    onlyIf {
+        val process = ProcessBuilder("docker", "images", "-q", "spektr:local")
+            .redirectErrorStream(true)
+            .start()
+
+        process.inputStream.read().toString().isEmpty()
+    }
+}
+
+// Task to prepare test environment (build image + JARs)
+tasks.register("prepareTestEnv") {
+    group = "verification"
+    description = "Prepares test environment: builds Docker image and test-api JARs"
+    dependsOn("buildSpektrImage")
+    dependsOn(":examples:ghost-book:test-api:shadowJar")
+}
+
 tasks.test {
     useJUnitPlatform()
+    dependsOn("prepareTestEnv")
 }
 
 // Task to generate XSD from JAXB-annotated Kotlin classes
@@ -70,6 +99,7 @@ tasks.register<JavaExec>("generateXsd") {
 }
 
 // Generate XSD before processing resources
-tasks.processResources {
-    dependsOn("generateXsd")
-}
+// Note: Temporarily disabled due to JAXB annotation issues in domain classes
+// tasks.processResources {
+//     dependsOn("generateXsd")
+// }
