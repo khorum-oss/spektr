@@ -1,0 +1,12 @@
+Ghost
+CreateGhostRequest
+CreateGhostResponse
+GetGhostRequest
+GetGhostResponse
+ListGhostsRequest
+ListGhostsResponse
+HauntedHouse
+UsAddress
+CaAddress
+GenericAddress
+GhostReport

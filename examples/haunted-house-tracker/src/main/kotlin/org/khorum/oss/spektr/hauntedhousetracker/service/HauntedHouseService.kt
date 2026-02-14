@@ -59,7 +59,7 @@ class HauntedHouseService(
         val newHauntedHouse = HauntedHouse(
             id = UUID.randomUUID(),
             address = address,
-            ghosts = reportsByGhost
+            ghostReports = reportsByGhost
         )
 
         hauntedHouseRepo.saveGhost(newHauntedHouse)
@@ -73,10 +73,10 @@ class HauntedHouseService(
         if (type == null) return hauntedHouseRepo.getHauntedHouses().toList()
 
         return hauntedHouseRepo.getHauntedHouses()
-            .filter { it.ghosts?.keys?.any { ghost -> ghost.type == type} == true }
+            .filter { it.ghostReports?.keys?.any { ghost -> ghost.type == type} == true }
             .onEach {
-                val ghosts = it.ghosts?.filter { ghost -> ghost.key.type == type } ?: emptyMap()
-                it.ghosts = ghosts
+                val ghosts = it.ghostReports?.filter { ghost -> ghost.key.type == type } ?: emptyMap()
+                it.ghostReports = ghosts
             }
             .toList()
     }

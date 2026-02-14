@@ -21,7 +21,7 @@ data class Ghost(
 ) {
     companion object {
         const val NAMESPACE = "http://org.khorum-oss.com/ghost-book"
-        const val PACKAGE = "org.khorum.oss.spekter.examples.common"
+        const val PACKAGE = "org.khorum.oss.spekter.examples.common.domain"
     }
 }
 

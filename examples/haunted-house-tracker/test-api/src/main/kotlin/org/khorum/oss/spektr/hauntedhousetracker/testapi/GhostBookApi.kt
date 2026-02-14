@@ -13,12 +13,12 @@ class GhostBookApi : EndpointModule {
 
             SoapResponse(
                 body = """
-                    |<ns:CreateGhostResponse xmlns:ns="http://org.khorum-oss.com/ghost-book">
+                    |<ns:createGhostResponse xmlns:ns="http://org.khorum-oss.com/ghost-book">
                     |  <ghost>
                     |    <type>$type</type>
                     |    ${origin?.let { "<origin>$it</origin>" } ?: ""}
                     |  </ghost>
-                    |</ns:CreateGhostResponse>
+                    |</ns:createGhostResponse>
                 """.trimMargin()
             )
         }
@@ -29,17 +29,17 @@ class GhostBookApi : EndpointModule {
 
             val responseBody = if (type.uppercase() == "OBAKE") {
                 """
-                    |<ns:GetGhostResponse xmlns:ns="http://org.khorum-oss.com/ghost-book">
+                    |<ns:getGhostResponse xmlns:ns="http://org.khorum-oss.com/ghost-book">
                     |  <ghost>
                     |    <type>$type</type>
                     |    <origin>Nippon</origin>
                     |  </ghost>
-                    |</ns:GetGhostResponse>
+                    |</ns:getGhostResponse>
                 """.trimMargin()
             } else {
                 """
-                    |<ns:GetGhostResponse xmlns:ns="http://org.khorum-oss.com/ghost-book">
-                    |</ns:GetGhostResponse>
+                    |<ns:getGhostResponse xmlns:ns="http://org.khorum-oss.com/ghost-book">
+                    |</ns:getGhostResponse>
                 """.trimMargin()
             }
 
@@ -50,10 +50,10 @@ class GhostBookApi : EndpointModule {
         operation("/ws", "ListGhosts") { request ->
             SoapResponse(
                 body = """
-                    |<ns:ListGhostsResponse xmlns:ns="http://org.khorum-oss.com/ghost-book">
+                    |<ns:listGhostsResponse xmlns:ns="http://org.khorum-oss.com/ghost-book">
                     |  <ghost><type>Poltergeist</type></ghost>
                     |  <ghost><type>Yurei</type></ghost>
-                    |</ns:ListGhostsResponse>
+                    |</ns:listGhostsResponse>
                 """.trimMargin()
             )
         }

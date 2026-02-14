@@ -1,5 +1,6 @@
 package org.khorum.oss.spekter.examples.common.domain
 
+import com.fasterxml.jackson.annotation.JsonGetter
 import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.xml.bind.annotation.XmlAccessType
 import jakarta.xml.bind.annotation.XmlAccessorType
@@ -29,8 +30,12 @@ data class HauntedHouse(
 
     @field:XmlTransient
     @JsonIgnore
-    var ghosts: Map<Ghost, GhostReport>? = null
-)
+    var ghostReports: Map<Ghost, GhostReport>? = null
+) {
+    /** JSON-friendly representation of ghosts for REST API responses */
+    @JsonGetter("ghosts")
+    fun getGhostsForJson(): List<Ghost>? = ghostReports?.keys?.toList()
+}
 
 /** A unique type of ghost */
 typealias GhostType = String

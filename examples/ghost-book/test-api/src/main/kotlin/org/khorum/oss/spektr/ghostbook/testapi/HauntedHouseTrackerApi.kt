@@ -30,7 +30,7 @@ class HauntedHouseTrackerApi : EndpointModule {
                 state = "New York",
                 postalCode = "11701"
             ),
-            ghosts = mapOf()
+            ghostReports = mapOf()
         ),
         HauntedHouse(
             id = houseId2,
@@ -40,7 +40,7 @@ class HauntedHouseTrackerApi : EndpointModule {
                 state = "California",
                 postalCode = "95128"
             ),
-            ghosts = mapOf()
+            ghostReports = mapOf()
         ),
         HauntedHouse(
             id = houseId3,
@@ -50,7 +50,7 @@ class HauntedHouseTrackerApi : EndpointModule {
                 state = "Colorado",
                 postalCode = "80517"
             ),
-            ghosts = mapOf()
+            ghostReports = mapOf()
         )
     ).associateBy { it.id }.toMutableMap()
 
@@ -79,7 +79,7 @@ class HauntedHouseTrackerApi : EndpointModule {
                 HauntedHouse(
                     id = UUID.randomUUID(),
                     address = request.address!!,
-                    ghosts =  request.ghosts?.associate { type -> Ghost(type) to GhostReport(1) } ?: emptyMap()
+                    ghostReports = request.ghosts?.associate { type -> Ghost(type) to GhostReport(1) } ?: emptyMap()
                 )
             } else {
                 null
