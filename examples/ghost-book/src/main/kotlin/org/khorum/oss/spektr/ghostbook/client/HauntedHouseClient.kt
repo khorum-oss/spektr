@@ -1,14 +1,12 @@
 package org.khorum.oss.spektr.ghostbook.client
 
 import kotlinx.coroutines.reactor.awaitSingle
-import kotlinx.coroutines.reactor.awaitSingleOrNull
 import org.khorum.oss.spekter.examples.common.domain.CreateHauntedHouseRequest
 import org.khorum.oss.spekter.examples.common.domain.GhostType
 import org.khorum.oss.spekter.examples.common.domain.HauntedHouse
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.bodyToMono
-import java.util.UUID
 
 @Service
 class HauntedHouseClient(
