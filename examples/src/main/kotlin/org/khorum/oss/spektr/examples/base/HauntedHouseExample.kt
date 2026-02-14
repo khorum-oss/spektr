@@ -6,7 +6,7 @@ import tools.jackson.module.kotlin.KotlinModule
 import tools.jackson.module.kotlin.readValue
 import org.khorum.oss.spektr.dsl.DynamicRequest
 import org.khorum.oss.spektr.dsl.EndpointModule
-import org.khorum.oss.spektr.dsl.EndpointRegistry
+import org.khorum.oss.spektr.dsl.RestEndpointRegistry
 import java.util.UUID
 
 private val OBJECT_MAPPER: ObjectMapper = JsonMapper.builder()
@@ -37,7 +37,7 @@ class HouseEndpoints : EndpointModule {
         collection[id2] = House(id2)
     }
 
-    override fun EndpointRegistry.configure() {
+    override fun RestEndpointRegistry.configure() {
         get("/api/houses/{id}") { request ->
             val id = request.pathId
             returnBody(collection[id])

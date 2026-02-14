@@ -1,6 +1,6 @@
 package org.khorum.oss.spektr.hauntedhousetracker.config
 
-import org.khorum.oss.spekter.examples.common.Ghost
+import org.khorum.oss.spekter.examples.common.domain.Ghost
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean

@@ -8,5 +8,6 @@ include(
     "examples:ghost-book:test-api",
     "examples:haunted-house-tracker",
     "examples:haunted-house-tracker:test-api",
-    "examples:common"
+    "examples:common",
+    "examples:test-common"
 )

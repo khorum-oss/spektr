@@ -1,6 +1,6 @@
 package org.khorum.oss.spektr.hauntedhousetracker.repo
 
-import org.khorum.oss.spekter.examples.common.HauntedHouse
+import org.khorum.oss.spekter.examples.common.domain.HauntedHouse
 import org.khorum.oss.spekter.examples.common.Loggable
 import org.springframework.stereotype.Component
 import java.util.*

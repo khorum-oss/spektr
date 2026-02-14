@@ -2,13 +2,13 @@ package org.khorum.oss.spektr.hauntedhousetracker.client
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import org.khorum.oss.spekter.examples.common.CreateGhostRequest
-import org.khorum.oss.spekter.examples.common.CreateGhostResponse
-import org.khorum.oss.spekter.examples.common.GetGhostRequest
-import org.khorum.oss.spekter.examples.common.GetGhostResponse
-import org.khorum.oss.spekter.examples.common.Ghost
-import org.khorum.oss.spekter.examples.common.ListGhostsRequest
-import org.khorum.oss.spekter.examples.common.ListGhostsResponse
+import org.khorum.oss.spekter.examples.common.domain.CreateGhostRequest
+import org.khorum.oss.spekter.examples.common.domain.CreateGhostResponse
+import org.khorum.oss.spekter.examples.common.domain.GetGhostRequest
+import org.khorum.oss.spekter.examples.common.domain.GetGhostResponse
+import org.khorum.oss.spekter.examples.common.domain.Ghost
+import org.khorum.oss.spekter.examples.common.domain.ListGhostsRequest
+import org.khorum.oss.spekter.examples.common.domain.ListGhostsResponse
 import org.springframework.stereotype.Service
 import org.springframework.ws.client.core.WebServiceTemplate
 import org.springframework.ws.soap.client.core.SoapActionCallback

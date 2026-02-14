@@ -2,6 +2,13 @@ package org.khorum.oss.spekter.examples.common
 
 import jakarta.xml.bind.JAXBContext
 import jakarta.xml.bind.SchemaOutputResolver
+import org.khorum.oss.spekter.examples.common.domain.CreateGhostRequest
+import org.khorum.oss.spekter.examples.common.domain.CreateGhostResponse
+import org.khorum.oss.spekter.examples.common.domain.GetGhostRequest
+import org.khorum.oss.spekter.examples.common.domain.GetGhostResponse
+import org.khorum.oss.spekter.examples.common.domain.Ghost
+import org.khorum.oss.spekter.examples.common.domain.ListGhostsRequest
+import org.khorum.oss.spekter.examples.common.domain.ListGhostsResponse
 import java.io.File
 import java.io.StringWriter
 import javax.xml.transform.Result

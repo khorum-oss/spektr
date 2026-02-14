@@ -1,12 +1,12 @@
 package org.khorum.oss.spektr.hauntedhousetracker.service
 
-import org.khorum.oss.spekter.examples.common.Address
-import org.khorum.oss.spekter.examples.common.CreateGhostRequest
-import org.khorum.oss.spekter.examples.common.CreateHauntedHouseRequest
-import org.khorum.oss.spekter.examples.common.Ghost
-import org.khorum.oss.spekter.examples.common.GhostReport
-import org.khorum.oss.spekter.examples.common.GhostType
-import org.khorum.oss.spekter.examples.common.HauntedHouse
+import org.khorum.oss.spekter.examples.common.domain.Address
+import org.khorum.oss.spekter.examples.common.domain.CreateGhostRequest
+import org.khorum.oss.spekter.examples.common.domain.CreateHauntedHouseRequest
+import org.khorum.oss.spekter.examples.common.domain.Ghost
+import org.khorum.oss.spekter.examples.common.domain.GhostReport
+import org.khorum.oss.spekter.examples.common.domain.GhostType
+import org.khorum.oss.spekter.examples.common.domain.HauntedHouse
 import org.khorum.oss.spekter.examples.common.Loggable
 import org.khorum.oss.spektr.hauntedhousetracker.client.GhostSoapClient
 import org.khorum.oss.spektr.hauntedhousetracker.repo.HauntedHouseRepo
@@ -59,7 +59,7 @@ class HauntedHouseService(
         val newHauntedHouse = HauntedHouse(
             id = UUID.randomUUID(),
             address = address,
-            ghosts = reportsByGhost
+            ghostReports = reportsByGhost
         )
 
         hauntedHouseRepo.saveGhost(newHauntedHouse)
@@ -69,8 +69,16 @@ class HauntedHouseService(
         return newHauntedHouse
     }
 
-    suspend fun getHauntedHouses(): List<HauntedHouse> {
-        return hauntedHouseRepo.getHauntedHouses().toList()
+    suspend fun getHauntedHouses(type: GhostType? = null): List<HauntedHouse> {
+        if (type == null) return hauntedHouseRepo.getHauntedHouses().toList()
+
+        return hauntedHouseRepo.getHauntedHouses()
+            .filter { it.ghostReports?.keys?.any { ghost -> ghost.type == type} == true }
+            .onEach {
+                val ghosts = it.ghostReports?.filter { ghost -> ghost.key.type == type } ?: emptyMap()
+                it.ghostReports = ghosts
+            }
+            .toList()
     }
 
     suspend fun getHauntedHousesById(id: UUID): HauntedHouse? {

@@ -31,7 +31,10 @@ GET {{ghostsUri}}/ghosts.wsdl
 
 ### DOCKER SPEKTR INTEGRATION TEST
 
-@houseId = {{$random.uuid}}
+@houseId = 01bd32f5-325f-41d3-8047-4812d197a183
 
 ### GET HOUSE BY ID
 GET http://localhost:{{dockerPort}}/haunted-houses/{{houseId}}
+
+### GET HOUSES
+GET http://localhost:{{dockerPort}}/haunted-houses

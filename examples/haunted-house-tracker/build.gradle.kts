@@ -29,6 +29,7 @@ dependencies {
 
     implementation("io.github.microutils:kotlin-logging:4.0.0-beta-2")
 
+    testImplementation(project(":examples:test-common"))
     testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
@@ -40,7 +41,9 @@ dependencies {
     testImplementation("io.projectreactor:reactor-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
+
 val compileKotlin: KotlinCompile by tasks
+
 compileKotlin.compilerOptions {
     freeCompilerArgs.set(listOf("-Xannotation-default-target=param-property"))
 }
@@ -51,6 +54,14 @@ tasks.register<Exec>("buildSpektrImage") {
     description = "Builds the spektr:local Docker image"
     workingDir = rootProject.projectDir
     commandLine("docker", "build", "-t", "spektr:local", ".")
+
+    onlyIf {
+        val process = ProcessBuilder("docker", "images", "-q", "spektr:local")
+            .redirectErrorStream(true)
+            .start()
+
+        process.inputStream.read().toString().isEmpty()
+    }
 }
 
 // Task to prepare test environment (build image + JARs)

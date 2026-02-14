@@ -1,12 +1,12 @@
 package org.khorum.oss.spektr.examples.base
 
 import org.khorum.oss.spektr.dsl.EndpointModule
-import org.khorum.oss.spektr.dsl.EndpointRegistry
+import org.khorum.oss.spektr.dsl.RestEndpointRegistry
 import org.khorum.oss.spektr.dsl.SoapEndpointRegistry
 import org.khorum.oss.spektr.dsl.SoapResponse
 
 class WeatherSoapEndpoints : EndpointModule {
-    override fun EndpointRegistry.configure() {
+    override fun RestEndpointRegistry.configure() {
         // No REST endpoints in this module
     }
 
