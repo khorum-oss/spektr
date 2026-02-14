@@ -69,8 +69,16 @@ class HauntedHouseService(
         return newHauntedHouse
     }
 
-    suspend fun getHauntedHouses(): List<HauntedHouse> {
-        return hauntedHouseRepo.getHauntedHouses().toList()
+    suspend fun getHauntedHouses(type: GhostType? = null): List<HauntedHouse> {
+        if (type == null) return hauntedHouseRepo.getHauntedHouses().toList()
+
+        return hauntedHouseRepo.getHauntedHouses()
+            .filter { it.ghosts?.keys?.any { ghost -> ghost.type == type} == true }
+            .onEach {
+                val ghosts = it.ghosts?.filter { ghost -> ghost.key.type == type } ?: emptyMap()
+                it.ghosts = ghosts
+            }
+            .toList()
     }
 
     suspend fun getHauntedHousesById(id: UUID): HauntedHouse? {

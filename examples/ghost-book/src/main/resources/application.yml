@@ -1,6 +1,8 @@
-
 server:
   port: ${SERVER_PORT:8081}
+
+haunted-house-tracker:
+  base-url: ${HAUNTED_HOUSE_TRACKER_BASE_URL:http://localhost:8082}
 
 ---
 # This profile is used when running integrations with the Spektr

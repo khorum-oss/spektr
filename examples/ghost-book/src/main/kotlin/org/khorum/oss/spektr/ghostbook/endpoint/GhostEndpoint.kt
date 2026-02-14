@@ -20,22 +20,20 @@ class GhostEndpoint(
 
     @ResponsePayload
     @PayloadRoot(namespace = Ghost.NAMESPACE, localPart = "createGhostRequest")
-    fun createGhost(@RequestPayload request: CreateGhostRequest): CreateGhostResponse {
-        val ghost = ghostService.create(request)
-        return CreateGhostResponse(ghost = ghost)
+    suspend fun createGhost(@RequestPayload request: CreateGhostRequest): CreateGhostResponse {
+        return ghostService.create(request)
     }
 
 
     @PayloadRoot(namespace = Ghost.NAMESPACE, localPart = "getGhostRequest")
     @ResponsePayload
-    fun getGhost(@RequestPayload request: GetGhostRequest): GetGhostResponse {
+    suspend fun getGhost(@RequestPayload request: GetGhostRequest): GetGhostResponse {
         val ghost = ghostService.findByType(request.type)
-        return GetGhostResponse(ghost = ghost)
     }
 
     @PayloadRoot(namespace = Ghost.NAMESPACE, localPart = "listGhostsRequest")
     @ResponsePayload
-    fun listGhosts(@RequestPayload request: ListGhostsRequest): ListGhostsResponse {
+    suspend fun listGhosts(@RequestPayload request: ListGhostsRequest): ListGhostsResponse {
         val ghosts = ghostService.findAll()
         return ListGhostsResponse(ghosts = ghosts.toList())
     }

@@ -13,7 +13,10 @@ data class Ghost(
     @field:XmlElement(required = true)
     val type: String = "",
     @field:XmlElement(nillable = true)
-    val origin: String? = null
+    val origin: String? = null,
+    @field:XmlElement(nillable = true)
+    @field:XmlElementWrapper(name = "houses", nillable = true)
+    var houses: List<HauntedHouse>? = null
 ) {
     companion object {
         const val NAMESPACE = "http://org.khorum-oss.com/ghost-book"

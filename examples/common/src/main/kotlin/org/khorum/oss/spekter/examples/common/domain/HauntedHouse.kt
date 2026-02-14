@@ -3,7 +3,6 @@ package org.khorum.oss.spekter.examples.common.domain
 import jakarta.xml.bind.annotation.XmlAccessType
 import jakarta.xml.bind.annotation.XmlAccessorType
 import jakarta.xml.bind.annotation.XmlElement
-import jakarta.xml.bind.annotation.XmlTransient
 import jakarta.xml.bind.annotation.XmlType
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 import org.khorum.oss.spekter.examples.common.UuidAdapter
@@ -21,8 +20,7 @@ data class HauntedHouse(
         streetLine1 = "", city = "", postalCode = "", country = ""
     ),
 
-    @field:XmlTransient
-    val ghosts: Map<Ghost, GhostReport>? = null
+    var ghosts: Map<Ghost, GhostReport>? = null
 )
 
 /** A unique type of ghost */
