@@ -14,10 +14,11 @@ COPY app/build.gradle.kts app/
 COPY dsl/build.gradle.kts dsl/
 
 # Create stub modules required by settings.gradle.kts (we only build app)
-RUN mkdir -p examples examples/common examples/ghost-book examples/ghost-book/test-api \
+RUN mkdir -p examples examples/common examples/test-common examples/ghost-book examples/ghost-book/test-api \
     examples/haunted-house-tracker examples/haunted-house-tracker/test-api && \
     printf 'tasks.bootJar { enabled = false }\ntasks.jar { enabled = true }\n' > examples/build.gradle.kts && \
     printf 'tasks.bootJar { enabled = false }\ntasks.jar { enabled = true }\n' > examples/common/build.gradle.kts && \
+    printf 'tasks.bootJar { enabled = false }\ntasks.jar { enabled = true }\n' > examples/test-common/build.gradle.kts && \
     printf 'tasks.bootJar { enabled = false }\n' > examples/ghost-book/build.gradle.kts && \
     touch examples/ghost-book/test-api/build.gradle.kts && \
     printf 'tasks.bootJar { enabled = false }\n' > examples/haunted-house-tracker/build.gradle.kts && \
