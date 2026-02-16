@@ -1,4 +1,4 @@
-package org.khorum.oss.spektr.dsl
+package org.khorum.oss.spektr.dsl.soap
 
 class SoapEndpointRegistry {
     private val endpointList = mutableListOf<SoapEndpointDefinition>()

@@ -1,8 +1,8 @@
-package org.khorum.oss.spektr.dsl
+package org.khorum.oss.spektr.dsl.rest
 
 class RestEndpointRegistry {
-    private val endpointList = mutableListOf<EndpointDefinition>()
-    val endpoints: List<EndpointDefinition> get() = endpointList
+    private val endpointList = mutableListOf<RestEndpointDefinition>()
+    val endpoints: List<RestEndpointDefinition> get() = endpointList
 
     fun get(path: String, handler: DynamicHandler) = register(HttpMethod.GET, path, handler)
     fun post(path: String, handler: DynamicHandler) = register(HttpMethod.POST, path, handler)
@@ -18,7 +18,7 @@ class RestEndpointRegistry {
     }
 
     private fun register(method: HttpMethod, path: String, handler: DynamicHandler) {
-        endpointList.add(EndpointDefinition(method, path, handler))
+        endpointList.add(RestEndpointDefinition(method, path, handler))
     }
 
     // Error scenario helpers

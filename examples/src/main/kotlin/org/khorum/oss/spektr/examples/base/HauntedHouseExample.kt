@@ -4,9 +4,9 @@ import tools.jackson.databind.ObjectMapper
 import tools.jackson.databind.json.JsonMapper
 import tools.jackson.module.kotlin.KotlinModule
 import tools.jackson.module.kotlin.readValue
-import org.khorum.oss.spektr.dsl.DynamicRequest
+import org.khorum.oss.spektr.dsl.rest.DynamicRequest
 import org.khorum.oss.spektr.dsl.EndpointModule
-import org.khorum.oss.spektr.dsl.RestEndpointRegistry
+import org.khorum.oss.spektr.dsl.rest.RestEndpointRegistry
 import java.util.UUID
 
 private val OBJECT_MAPPER: ObjectMapper = JsonMapper.builder()

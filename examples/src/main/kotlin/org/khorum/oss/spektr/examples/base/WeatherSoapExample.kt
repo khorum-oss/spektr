@@ -1,9 +1,9 @@
 package org.khorum.oss.spektr.examples.base
 
 import org.khorum.oss.spektr.dsl.EndpointModule
-import org.khorum.oss.spektr.dsl.RestEndpointRegistry
-import org.khorum.oss.spektr.dsl.SoapEndpointRegistry
-import org.khorum.oss.spektr.dsl.SoapResponse
+import org.khorum.oss.spektr.dsl.rest.RestEndpointRegistry
+import org.khorum.oss.spektr.dsl.soap.SoapEndpointRegistry
+import org.khorum.oss.spektr.dsl.soap.SoapResponse
 
 class WeatherSoapEndpoints : EndpointModule {
     override fun RestEndpointRegistry.configure() {

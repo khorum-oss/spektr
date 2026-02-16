@@ -1,4 +1,4 @@
-package org.khorum.oss.spektr.dsl
+package org.khorum.oss.spektr.dsl.rest
 
 data class DynamicRequest(
     val headers: Map<String, List<String>>,

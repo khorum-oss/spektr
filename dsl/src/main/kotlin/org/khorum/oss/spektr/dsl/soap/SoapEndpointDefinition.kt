@@ -1,4 +1,4 @@
-package org.khorum.oss.spektr.dsl
+package org.khorum.oss.spektr.dsl.soap
 
 data class SoapEndpointDefinition(
     val path: String,

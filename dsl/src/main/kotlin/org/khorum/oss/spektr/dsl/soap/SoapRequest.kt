@@ -1,4 +1,4 @@
-package org.khorum.oss.spektr.dsl
+package org.khorum.oss.spektr.dsl.soap
 
 data class SoapRequest(
     val headers: Map<String, List<String>>,

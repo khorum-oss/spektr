@@ -1,4 +1,4 @@
-package org.khorum.oss.spektr.dsl
+package org.khorum.oss.spektr.dsl.rest
 
 data class DynamicResponse(
     val status: Int = 200,

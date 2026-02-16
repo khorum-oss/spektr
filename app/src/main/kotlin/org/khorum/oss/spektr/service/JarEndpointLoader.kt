@@ -2,8 +2,8 @@ package org.khorum.oss.spektr.service
 
 import jakarta.annotation.PostConstruct
 import org.khorum.oss.spektr.dsl.EndpointModule
-import org.khorum.oss.spektr.dsl.RestEndpointRegistry
-import org.khorum.oss.spektr.dsl.SoapEndpointRegistry
+import org.khorum.oss.spektr.dsl.rest.RestEndpointRegistry
+import org.khorum.oss.spektr.dsl.soap.SoapEndpointRegistry
 import org.khorum.oss.spektr.utils.Loggable
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component

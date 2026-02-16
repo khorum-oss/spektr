@@ -1,8 +1,8 @@
 package org.khorum.oss.spektr.hauntedhousetracker.testapi
 
 import org.khorum.oss.spektr.dsl.EndpointModule
-import org.khorum.oss.spektr.dsl.SoapEndpointRegistry
-import org.khorum.oss.spektr.dsl.SoapResponse
+import org.khorum.oss.spektr.dsl.soap.SoapEndpointRegistry
+import org.khorum.oss.spektr.dsl.soap.SoapResponse
 
 class GhostBookApi : EndpointModule {
     override fun SoapEndpointRegistry.configureSoap() {

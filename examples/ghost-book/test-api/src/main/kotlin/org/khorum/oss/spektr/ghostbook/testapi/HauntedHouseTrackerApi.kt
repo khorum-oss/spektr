@@ -6,7 +6,7 @@ import org.khorum.oss.spekter.examples.common.domain.GhostReport
 import org.khorum.oss.spekter.examples.common.domain.HauntedHouse
 import org.khorum.oss.spekter.examples.common.domain.UsAddress
 import org.khorum.oss.spektr.dsl.EndpointModule
-import org.khorum.oss.spektr.dsl.RestEndpointRegistry
+import org.khorum.oss.spektr.dsl.rest.RestEndpointRegistry
 import tools.jackson.databind.ObjectMapper
 import tools.jackson.databind.json.JsonMapper
 import tools.jackson.module.kotlin.KotlinModule

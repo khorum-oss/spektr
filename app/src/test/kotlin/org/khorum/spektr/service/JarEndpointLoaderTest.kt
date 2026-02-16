@@ -1,8 +1,8 @@
 package org.khorum.spektr.service
 
 import org.junit.jupiter.api.Test
-import org.khorum.oss.spektr.dsl.EndpointDefinition
-import org.khorum.oss.spektr.dsl.SoapEndpointDefinition
+import org.khorum.oss.spektr.dsl.rest.RestEndpointDefinition
+import org.khorum.oss.spektr.dsl.soap.SoapEndpointDefinition
 import org.khorum.oss.spektr.service.DynamicRouterManager
 import org.khorum.oss.spektr.service.JarEndpointLoader
 import org.khorum.oss.spektr.service.SoapRouterManager
@@ -21,7 +21,7 @@ class JarEndpointLoaderTest {
 
         loader.reloadAll()
 
-        val captor = argumentCaptor<List<EndpointDefinition>>()
+        val captor = argumentCaptor<List<RestEndpointDefinition>>()
         verify(routerManager).updateEndpoints(captor.capture())
 
         val endpoints = captor.firstValue

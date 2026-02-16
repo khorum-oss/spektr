@@ -1,8 +1,8 @@
 package org.khorum.oss.spektr.service
 
-import org.khorum.oss.spektr.dsl.DynamicRequest
-import org.khorum.oss.spektr.dsl.DynamicResponse
-import org.khorum.oss.spektr.dsl.EndpointDefinition
+import org.khorum.oss.spektr.dsl.rest.DynamicRequest
+import org.khorum.oss.spektr.dsl.rest.DynamicResponse
+import org.khorum.oss.spektr.dsl.rest.RestEndpointDefinition
 import org.khorum.oss.spektr.utils.Loggable
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
@@ -23,9 +23,9 @@ import java.util.concurrent.atomic.AtomicReference
 class DynamicRouterManager(
     private val objectMapper: ObjectMapper
 ) : Loggable {
-    private val registry = AtomicReference<List<EndpointDefinition>>(emptyList())
+    private val registry = AtomicReference<List<RestEndpointDefinition>>(emptyList())
 
-    fun updateEndpoints(definitions: List<EndpointDefinition>) {
+    fun updateEndpoints(definitions: List<RestEndpointDefinition>) {
         registry.set(definitions)
     }
 

@@ -1,6 +1,6 @@
-package org.khorum.oss.spektr.dsl
+package org.khorum.oss.spektr.dsl.rest
 
-data class EndpointDefinition(
+data class RestEndpointDefinition(
     val method: HttpMethod,
     val path: String,
     val handler: DynamicHandler
