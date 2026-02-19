@@ -1,7 +1,8 @@
-package org.khorum.oss.spektr.dsl.soap
+package org.khorum.oss.spektr.dsl.soap.dsl
 
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import org.khorum.oss.spektr.dsl.soap.SoapXml
 import java.time.LocalDate
 import kotlin.test.assertEquals
 
@@ -35,7 +36,7 @@ class SoapBuilderDslTest {
         builder: SoapEnvelopeBuilder,
         expectedFileLocation: String
     ) {
-        val generatedXml = builder.toXml().normalize().content
+        val generatedXml = SoapXml(builder.toPrettyString()).normalize().content
         val expectedXml = loadResourceXml(expectedFileLocation).normalize().content
         assertEquals(
             expectedXml,
@@ -43,7 +44,7 @@ class SoapBuilderDslTest {
             """
                     ACTUAL: $generatedXml
                     EXPECT: $expectedXml
-                    
+
                 """.trimIndent()
         )
     }
@@ -188,7 +189,7 @@ class SoapBuilderDslTest {
                                     }
                                     element("witness") {
                                         element("name") { content = "Marcus Chen" }
-                                        optional("credibility") {  }
+                                        optional("credibility") { }
                                     }
                                 }
                             }
@@ -387,7 +388,8 @@ class SoapBuilderDslTest {
                                                 attribute("room", "Séance Room")
                                                 element("date") { content = LocalDate.of(2024, 10, 31) }
                                                 element("description") {
-                                                    cdata = """Translucent figure seen near the fireplace — "cold draft" reported by 3 visitors"""
+                                                    cdata =
+                                                        """Translucent figure seen near the fireplace — "cold draft" reported by 3 visitors"""
                                                 }
                                             }
                                             element("sighting") {
