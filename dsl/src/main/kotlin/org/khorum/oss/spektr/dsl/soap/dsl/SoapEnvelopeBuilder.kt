@@ -5,30 +5,79 @@ import org.khorum.oss.spektr.dsl.soap.dsl.body.SoapBodyContent
 import org.khorum.oss.spektr.dsl.soap.dsl.body.SoapFaultBuilder
 import org.khorum.oss.spektr.dsl.soap.dsl.fault.SoapFaultScope
 
+/**
+ * Builder for constructing SOAP envelopes.
+ *
+ * This is the root builder class for the SOAP DSL, providing methods to configure
+ * the envelope's version, namespaces, header, and body sections.
+ *
+ * Example:
+ * ```kotlin
+ * val envelope = SoapEnvelopeBuilder().apply {
+ *     version = SoapVersion.V1_2
+ *     namespaces { ns("xmlns:ns" to "http://example.com") }
+ *     body { element("ns:Response") { content = "OK" } }
+ * }
+ * println(envelope.toPrettyString())
+ * ```
+ */
 class SoapEnvelopeBuilder : SoapComponent {
+    /** The SOAP version to use (default: SOAP 1.2). */
     var version: SoapVersion = SoapVersion.V1_2
+
+    /** The XML prefix for SOAP envelope elements (default: "soapenv"). */
     var envelopePrefix: String = "soapenv"
+
+    /** Optional custom schema location to override the default namespace URI. */
     var schemasLocation: String? = null
+
     private var namespaces: SoapNamespacesBuilder? = null
     private var header: SoapHeaderBuilder? = null
     private var body: SoapBodyContent? = null
 
+    /**
+     * Configures custom XML namespaces for the envelope.
+     *
+     * @param block Configuration block for defining namespace prefixes and URIs.
+     */
     @SoapDslMarker
     fun namespaces(block: SoapNamespacesBuilder.() -> Unit) {
         namespaces = SoapNamespacesBuilder().apply(block)
     }
 
+    /**
+     * Configures the SOAP header section.
+     *
+     * @param block Configuration block for adding header elements.
+     */
     @SoapDslMarker
     fun header(block: SoapHeaderBuilder.() -> Unit) {
         header = SoapHeaderBuilder().apply(block)
     }
 
+    /**
+     * Configures the SOAP body section with elements.
+     *
+     * Cannot be called if [fault] has already been called on this envelope.
+     *
+     * @param block Configuration block for adding body elements.
+     * @throws IllegalStateException if body has already been set.
+     */
     @SoapDslMarker
     fun body(block: SoapBodyBuilder.() -> Unit) {
         checkBodyNotSet()
         body = SoapBodyBuilder(version).apply(block)
     }
 
+    /**
+     * Configures the SOAP body as a fault response.
+     *
+     * Cannot be called if [body] has already been called on this envelope.
+     * The fault structure depends on the configured [version].
+     *
+     * @param block Configuration block for defining the fault details.
+     * @throws IllegalStateException if body has already been set.
+     */
     @SoapDslMarker
     fun fault(block: SoapFaultScope.() -> Unit) {
         checkBodyNotSet()
@@ -39,19 +88,28 @@ class SoapEnvelopeBuilder : SoapComponent {
         if (body != null) throw IllegalStateException("Body already set")
     }
 
-    /** Returns compact XML without indentation or newlines. */
+    /**
+     * Returns compact XML without indentation or newlines.
+     *
+     * @return The serialized SOAP envelope as a single-line XML string.
+     */
     override fun toString(): String = buildString {
         serialize(this, pretty = false, indent = "", depth = 0)
     }
 
-    /** Returns formatted XML with indentation for readability. */
+    /**
+     * Returns formatted XML with indentation for readability.
+     *
+     * @param indent The string to use for each indentation level.
+     * @return The serialized SOAP envelope with pretty formatting.
+     */
     override fun toPrettyString(indent: String): String = buildString {
         serialize(this, pretty = true, indent = indent, depth = 0)
     }
 
-
     private fun serialize(sb: StringBuilder, pretty: Boolean, indent: String, depth: Int) {
-        val soapNs = schemasLocation ?: SOAP_NAMESPACES[version]
+        val soapNs = schemasLocation
+            ?: SOAP_NAMESPACES[version]
             ?: throw IllegalArgumentException("Unknown SOAP version: $version")
 
         sb.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")
