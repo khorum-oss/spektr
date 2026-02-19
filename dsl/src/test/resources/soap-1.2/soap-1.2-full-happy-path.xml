@@ -1,0 +1,34 @@
+<!-- ═══════════════════════════════════════════════════════════════
+6. SOAP 1.2 — Full happy-path response (prefix: env)
+═══════════════════════════════════════════════════════════════ -->
+<env:Envelope
+        xmlns:env="http://www.w3.org/2003/05/soap-envelope"
+        xmlns:ns="http://org.khorum-oss.com/ghost-book"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+    <env:Header>
+        <ns:correlationId env:mustUnderstand="true">corr-88af-11ee</ns:correlationId>
+    </env:Header>
+
+    <env:Body>
+        <ns:listGhostsResponse>
+            <ghosts>
+                <ghost>
+                    <type>Shadow</type>
+                    <name>Umbra</name>
+                    <hauntingScore>42.0</hauntingScore>
+                    <ability level="5">Shadow Manipulation</ability>
+                </ghost>
+                <ghost>
+                    <type>Banshee</type>
+                    <name>The Wailing One</name>
+                    <origin>Celtic Ruins</origin>
+                    <hauntingScore xsi:nil="true"/>
+                    <ability level="9">Death Wail</ability>
+                    <ability level="4">Precognition</ability>
+                </ghost>
+            </ghosts>
+            <totalCount>2</totalCount>
+        </ns:listGhostsResponse>
+    </env:Body>
+</env:Envelope>

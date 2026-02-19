@@ -1,0 +1,11 @@
+<!-- ═══════════════════════════════════════════════════════════════
+ 3. SOAP 1.1 — Minimal response (no header, single element)
+ ═══════════════════════════════════════════════════════════════ -->
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"
+               xmlns:ns="http://org.khorum-oss.com/ghost-book">
+    <soap:Body>
+        <ns:deleteGhostResponse>
+            <success>true</success>
+        </ns:deleteGhostResponse>
+    </soap:Body>
+</soap:Envelope>
