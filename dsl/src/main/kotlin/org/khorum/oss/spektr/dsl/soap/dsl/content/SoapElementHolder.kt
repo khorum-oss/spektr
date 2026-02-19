@@ -1,6 +1,5 @@
 package org.khorum.oss.spektr.dsl.soap.dsl.content
 
-import org.khorum.oss.spektr.dsl.soap.dsl.content.SoapChild
 import org.khorum.oss.spektr.dsl.soap.dsl.SoapDslMarker
 
 abstract class SoapElementHolder {

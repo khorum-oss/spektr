@@ -5,7 +5,7 @@ import org.khorum.oss.spektr.dsl.soap.dsl.body.SoapBodyContent
 import org.khorum.oss.spektr.dsl.soap.dsl.body.SoapFaultBuilder
 import org.khorum.oss.spektr.dsl.soap.dsl.fault.SoapFaultScope
 
-class SoapEnvelopeBuilder {
+class SoapEnvelopeBuilder : SoapComponent {
     var version: SoapVersion = SoapVersion.V1_2
     var envelopePrefix: String = "soapenv"
     var schemasLocation: String? = null
@@ -45,9 +45,10 @@ class SoapEnvelopeBuilder {
     }
 
     /** Returns formatted XML with indentation for readability. */
-    fun toPrettyString(indent: String = "  "): String = buildString {
+    override fun toPrettyString(indent: String): String = buildString {
         serialize(this, pretty = true, indent = indent, depth = 0)
     }
+
 
     private fun serialize(sb: StringBuilder, pretty: Boolean, indent: String, depth: Int) {
         val soapNs = schemasLocation ?: SOAP_NAMESPACES[version]
@@ -62,7 +63,8 @@ class SoapEnvelopeBuilder {
         sb.append(">")
         if (pretty) sb.appendLine()
 
-        header?.serialize(sb, envelopePrefix, pretty, indent, depth + 1)
+        header?.prefix = envelopePrefix
+        header?.serialize(sb, pretty, indent, depth + 1)
         serializeBody(sb, pretty, indent, depth + 1)
 
         sb.append(indent.repeat(depth))
