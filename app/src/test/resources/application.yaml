@@ -3,6 +3,6 @@ spring:
     web-application-type: reactive
 
 endpoint-jars:
-  dir: ../examples/build/libs
+  dir: ../examples/docker/endpoint-jars
 
 spektr:

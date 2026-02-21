@@ -1,8 +1,8 @@
 package org.khorum.oss.spektr.service
 
-import org.khorum.oss.spektr.dsl.SoapEndpointDefinition
-import org.khorum.oss.spektr.dsl.SoapRequest
-import org.khorum.oss.spektr.dsl.SoapResponse
+import org.khorum.oss.spektr.dsl.soap.SoapEndpointDefinition
+import org.khorum.oss.spektr.dsl.soap.SoapRequest
+import org.khorum.oss.spektr.dsl.soap.SoapResponse
 import org.khorum.oss.spektr.utils.Loggable
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean

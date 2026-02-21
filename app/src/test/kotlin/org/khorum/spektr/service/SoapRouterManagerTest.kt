@@ -2,10 +2,9 @@ package org.khorum.spektr.service
 
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.khorum.oss.spektr.dsl.SoapEndpointDefinition
-import org.khorum.oss.spektr.dsl.SoapResponse
+import org.khorum.oss.spektr.dsl.soap.SoapEndpointDefinition
+import org.khorum.oss.spektr.dsl.soap.SoapResponse
 import org.khorum.oss.spektr.service.SoapRouterManager
-import org.springframework.http.MediaType
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest
 import org.springframework.mock.web.server.MockServerWebExchange
 import org.springframework.web.reactive.function.server.ServerRequest

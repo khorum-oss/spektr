@@ -1,11 +1,15 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val spektrVersion: String by rootProject.extra
+
 plugins {
     kotlin("jvm") version "2.3.0"
     kotlin("plugin.spring") version "2.3.0"
     id("org.springframework.boot") version "4.1.0-M1"
     id("io.spring.dependency-management") version "1.1.7"
 }
+
+version = spektrVersion
 
 dependencies {
     implementation(project(":dsl"))
@@ -22,8 +26,6 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable")
 
     implementation("org.jetbrains.kotlin:kotlin-scripting-jvm-host")
-//    implementation("org.jetbrains.kotlin:kotlin-scripting-common")
-//    implementation("org.jetbrains.kotlin:kotlin-scripting-jvm")
 
     implementation("tools.jackson.module:jackson-module-kotlin")
 

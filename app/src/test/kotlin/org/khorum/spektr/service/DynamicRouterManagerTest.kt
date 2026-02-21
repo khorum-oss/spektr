@@ -2,9 +2,9 @@ package org.khorum.spektr.service
 
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.khorum.oss.spektr.dsl.DynamicResponse
-import org.khorum.oss.spektr.dsl.EndpointDefinition
-import org.khorum.oss.spektr.dsl.HttpMethod
+import org.khorum.oss.spektr.dsl.rest.DynamicResponse
+import org.khorum.oss.spektr.dsl.rest.RestEndpointDefinition
+import org.khorum.oss.spektr.dsl.rest.HttpMethod
 import org.khorum.oss.spektr.service.DynamicRouterManager
 import org.springframework.mock.http.server.reactive.MockServerHttpRequest
 import org.springframework.mock.web.server.MockServerWebExchange
@@ -25,7 +25,7 @@ class DynamicRouterManagerTest {
     @Test
     fun `updateEndpoints registers endpoints correctly`() {
         val endpoints = listOf(
-            EndpointDefinition(HttpMethod.GET, "/test/{id}") { request ->
+            RestEndpointDefinition(HttpMethod.GET, "/test/{id}") { request ->
                 DynamicResponse(body = mapOf("id" to request.pathVariables["id"]))
             }
         )
@@ -58,7 +58,7 @@ class DynamicRouterManagerTest {
     @Test
     fun `wrong method returns empty`() {
         val endpoints = listOf(
-            EndpointDefinition(HttpMethod.GET, "/test") { _ ->
+            RestEndpointDefinition(HttpMethod.GET, "/test") { _ ->
                 DynamicResponse(body = "ok")
             }
         )

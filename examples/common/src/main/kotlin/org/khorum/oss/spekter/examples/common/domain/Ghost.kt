@@ -57,7 +57,7 @@ data class CreateGhostResponse(
 @XmlType(name = "GetGhostRequest", propOrder = ["type", "includeHouses"])
 @XmlRootElement(name = "getGhostRequest", namespace = Ghost.NAMESPACE)
 data class GetGhostRequest(
-    @field:XmlElement(required = true)
+    @field:XmlElement(nillable = true)
     val type: String = "",
     @field:XmlElement(nillable = true)
     val includeHouses: Boolean = false

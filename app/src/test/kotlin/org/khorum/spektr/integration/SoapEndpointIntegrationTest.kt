@@ -16,20 +16,18 @@ class SoapEndpointIntegrationTest {
     private lateinit var webTestClient: WebTestClient
 
     @Test
-    fun `SOAP endpoint returns correct response for GetWeather action`() {
+    fun `SOAP endpoint returns correct response for ListGhosts action`() {
         val soapRequest = """
             <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
               <soap:Body>
-                <GetWeather xmlns="http://spektr.khorum.org/weather">
-                  <city>Seattle</city>
-                </GetWeather>
+                <ListGhosts xmlns="http://org.khorum-oss.com/ghost-book"/>
               </soap:Body>
             </soap:Envelope>
         """.trimIndent()
 
         webTestClient.post()
-            .uri("/ws/weather")
-            .header("SOAPAction", "\"GetWeather\"")
+            .uri("/ws")
+            .header("SOAPAction", "\"ListGhosts\"")
             .contentType(MediaType.TEXT_XML)
             .bodyValue(soapRequest)
             .exchange()
@@ -38,34 +36,37 @@ class SoapEndpointIntegrationTest {
             .expectBody(String::class.java)
             .value {
                 val body = requireNotNull(it)
-                assert(body.contains("Seattle")) { "Response should contain city name" }
-                assert(body.contains("GetWeatherResponse")) { "Response should contain GetWeatherResponse element" }
-                assert(body.contains("72")) { "Response should contain temperature" }
+                assert(body.contains("listGhostsResponse")) { "Response should contain listGhostsResponse element" }
+                assert(body.contains("Poltergeist")) { "Response should contain ghost type" }
             }
     }
 
     @Test
-    fun `SOAP fault endpoint returns 500 with fault envelope`() {
+    fun `SOAP endpoint returns correct response for GetGhost action`() {
         val soapRequest = """
             <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
               <soap:Body>
-                <InvalidOperation xmlns="http://spektr.khorum.org/weather"/>
+                <GetGhost xmlns="http://org.khorum-oss.com/ghost-book">
+                  <type>OBAKE</type>
+                </GetGhost>
               </soap:Body>
             </soap:Envelope>
         """.trimIndent()
 
         webTestClient.post()
-            .uri("/ws/weather")
-            .header("SOAPAction", "\"InvalidOperation\"")
+            .uri("/ws")
+            .header("SOAPAction", "\"GetGhost\"")
             .contentType(MediaType.TEXT_XML)
             .bodyValue(soapRequest)
             .exchange()
-            .expectStatus().is5xxServerError
+            .expectStatus().isOk
+            .expectHeader().contentTypeCompatibleWith(MediaType.TEXT_XML)
             .expectBody(String::class.java)
             .value {
                 val body = requireNotNull(it)
-                assert(body.contains("Fault")) { "Response should contain Fault element" }
-                assert(body.contains("soap:Client")) { "Response should contain fault code" }
+                assert(body.contains("getGhostResponse")) { "Response should contain getGhostResponse element" }
+                assert(body.contains("OBAKE")) { "Response should contain ghost type" }
+                assert(body.contains("Nippon")) { "Response should contain origin" }
             }
     }
 
@@ -80,7 +81,7 @@ class SoapEndpointIntegrationTest {
         """.trimIndent()
 
         webTestClient.post()
-            .uri("/ws/weather")
+            .uri("/ws")
             .header("SOAPAction", "\"UnknownAction\"")
             .contentType(MediaType.TEXT_XML)
             .bodyValue(soapRequest)
@@ -93,16 +94,14 @@ class SoapEndpointIntegrationTest {
         val soapRequest = """
             <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
               <soap:Body>
-                <GetWeather xmlns="http://spektr.khorum.org/weather">
-                  <city>Seattle</city>
-                </GetWeather>
+                <ListGhosts xmlns="http://org.khorum-oss.com/ghost-book"/>
               </soap:Body>
             </soap:Envelope>
         """.trimIndent()
 
         webTestClient.post()
             .uri("/ws/nonexistent")
-            .header("SOAPAction", "\"GetWeather\"")
+            .header("SOAPAction", "\"ListGhosts\"")
             .contentType(MediaType.TEXT_XML)
             .bodyValue(soapRequest)
             .exchange()
@@ -112,13 +111,13 @@ class SoapEndpointIntegrationTest {
     @Test
     fun `REST endpoints still work alongside SOAP`() {
         webTestClient.get()
-            .uri("/api/houses/dbf40fb3-e1bd-4683-8a78-547f054e4d42")
+            .uri("/haunted-houses/01bd32f5-325f-41d3-8047-4812d197a183")
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk
             .expectBody()
-            .jsonPath("$.id").isEqualTo("dbf40fb3-e1bd-4683-8a78-547f054e4d42")
-            .jsonPath("$.isHaunted").isEqualTo(true)
+            .jsonPath("$.id").isEqualTo("01bd32f5-325f-41d3-8047-4812d197a183")
+            .jsonPath("$.address.city").isEqualTo("Amityville")
     }
 
     @Test

@@ -17,40 +17,40 @@ class EndpointIntegrationTest {
 
     @Test
     fun `GET endpoint returns correct response with path variable`() {
-        // Uses pre-seeded UUID from HouseEndpoints
+        // Uses pre-seeded UUID from HauntedHouseTrackerApi
         webTestClient.get()
-            .uri("/api/houses/dbf40fb3-e1bd-4683-8a78-547f054e4d42")
+            .uri("/haunted-houses/01bd32f5-325f-41d3-8047-4812d197a183")
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk
             .expectBody()
-            .jsonPath("$.id").isEqualTo("dbf40fb3-e1bd-4683-8a78-547f054e4d42")
-            .jsonPath("$.isHaunted").isEqualTo(true)
+            .jsonPath("$.id").isEqualTo("01bd32f5-325f-41d3-8047-4812d197a183")
+            .jsonPath("$.address.city").isEqualTo("Amityville")
     }
 
     @Test
     fun `GET endpoint works with different path variables`() {
-        // Uses second pre-seeded UUID from HouseEndpoints
+        // Uses second pre-seeded UUID from HauntedHouseTrackerApi
         webTestClient.get()
-            .uri("/api/houses/7a99c0dc-64cf-4e0a-948c-1d2a6a191f30")
+            .uri("/haunted-houses/fa5ea8b6-e545-4b79-9310-da92fc04365f")
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk
             .expectBody()
-            .jsonPath("$.id").isEqualTo("7a99c0dc-64cf-4e0a-948c-1d2a6a191f30")
-            .jsonPath("$.isHaunted").isEqualTo(true)
+            .jsonPath("$.id").isEqualTo("fa5ea8b6-e545-4b79-9310-da92fc04365f")
+            .jsonPath("$.address.city").isEqualTo("San Jose")
     }
 
     @Test
     fun `GET all houses returns list`() {
         webTestClient.get()
-            .uri("/api/house")
+            .uri("/haunted-houses")
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isOk
             .expectBody()
             .jsonPath("$").isArray
-            .jsonPath("$.length()").isEqualTo(2)
+            .jsonPath("$.length()").isEqualTo(3)
     }
 
     @Test
@@ -65,7 +65,7 @@ class EndpointIntegrationTest {
     @Test
     fun `wrong HTTP method returns 404`() {
         webTestClient.post()
-            .uri("/api/houses/dbf40fb3-e1bd-4683-8a78-547f054e4d42")
+            .uri("/haunted-houses/01bd32f5-325f-41d3-8047-4812d197a183")
             .accept(MediaType.APPLICATION_JSON)
             .exchange()
             .expectStatus().isNotFound
