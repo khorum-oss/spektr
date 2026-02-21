@@ -16,3 +16,6 @@ dependencies {
     implementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
     implementation("io.projectreactor:reactor-test")
 }
+
+tasks.bootJar { enabled = false }
+tasks.jar { enabled = true }

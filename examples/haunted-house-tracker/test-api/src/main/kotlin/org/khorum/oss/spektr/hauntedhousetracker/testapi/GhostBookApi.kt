@@ -1,15 +1,18 @@
 package org.khorum.oss.spektr.hauntedhousetracker.testapi
 
+import org.khorum.oss.spekter.examples.common.Loggable
 import org.khorum.oss.spektr.dsl.EndpointModule
 import org.khorum.oss.spektr.dsl.soap.SoapEndpointRegistry
 import org.khorum.oss.spektr.dsl.soap.SoapResponse
 
-class GhostBookApi : EndpointModule {
+class GhostBookApi : EndpointModule, Loggable {
     override fun SoapEndpointRegistry.configureSoap() {
         // Create ghost - use ns: prefix for root only (UNQUALIFIED element form)
         operation("/ws", "CreateGhost") { request ->
             val type = extractElement(request.body, "type") ?: "Unknown"
             val origin = extractElement(request.body, "origin")
+
+            log.info { "Creating ghost: $type, origin: $origin" }
 
             SoapResponse(
                 body = """
@@ -26,6 +29,8 @@ class GhostBookApi : EndpointModule {
         // Get ghost by type
         operation("/ws", "GetGhost") { request ->
             val type = extractElement(request.body, "type") ?: "Unknown"
+
+            log.info { "Getting ghost: $type" }
 
             val responseBody = if (type.uppercase() == "OBAKE") {
                 """
@@ -48,6 +53,8 @@ class GhostBookApi : EndpointModule {
 
         // List all ghosts
         operation("/ws", "ListGhosts") { request ->
+            log.info { "Listing ghosts" }
+
             SoapResponse(
                 body = """
                     |<ns:listGhostsResponse xmlns:ns="http://org.khorum-oss.com/ghost-book">
