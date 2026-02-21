@@ -37,15 +37,20 @@ Content-Type: application/json
 GET {{hauntedHousesUri}}
 Content-Type: application/json
 
-
-
 ### DOCKER SPEKTR INTEGRATION TEST
 ### RELOAD
 POST http://localhost:{{dockerPort}}/admin/endpoints/reload
 
-### GET GHOST BY TYPE
+### GET GHOST BY TYPE (Yurei) - missing
 POST http://localhost:{{dockerPort}}/ws
 Content-Type: text/xml
 SOAPAction: GetGhost
 
 < request/get-yurei.xml
+
+### GET GHOST BY TYPE (Obake) - found
+POST http://localhost:{{dockerPort}}/ws
+Content-Type: text/xml
+SOAPAction: GetGhost
+
+< request/get-obake.xml
