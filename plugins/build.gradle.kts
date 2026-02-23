@@ -23,6 +23,8 @@ buildscript {
     }
 }
 
+tasks.bootJar { enabled = false }
+
 tasks.jar {
     archiveBaseName.set("spektr")
 }

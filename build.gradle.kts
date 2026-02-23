@@ -50,6 +50,12 @@ subprojects {
 	extensions.configure<kotlinx.kover.gradle.plugin.dsl.KoverProjectExtension> {
 		disable()
 	}
+
+	java {
+		toolchain {
+			languageVersion = JavaLanguageVersion.of(21)
+		}
+	}
 }
 
 detekt {

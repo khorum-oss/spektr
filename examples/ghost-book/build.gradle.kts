@@ -74,7 +74,7 @@ tasks.register("prepareTestEnv") {
     group = "verification"
     description = "Prepares test environment: builds Docker image and test-api JARs"
     dependsOn("buildSpektrImage")
-    dependsOn(":examples:ghost-book:test-api:shadowJar")
+    dependsOn(":examples:ghost-book:test-api:jar")
 }
 
 tasks.test {
