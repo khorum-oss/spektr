@@ -1,4 +1,4 @@
-package org.khorum.oss.spektr.tasks
+package org.khorum.oss.plugins.open.spektr
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.DirectoryProperty
@@ -9,6 +9,7 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.io.File
+import java.security.MessageDigest
 
 abstract class SpektrCacheAndVersionJarTask : DefaultTask() {
 
@@ -38,7 +39,7 @@ abstract class SpektrCacheAndVersionJarTask : DefaultTask() {
         val baseName = jarBaseName.get()
         val hashFile = File(outputDir, "$baseName.sha256")
 
-        val newHash = java.security.MessageDigest.getInstance("SHA-256")
+        val newHash = MessageDigest.getInstance("SHA-256")
             .digest(builtJar.readBytes())
             .joinToString("") { "%02x".format(it) }
 

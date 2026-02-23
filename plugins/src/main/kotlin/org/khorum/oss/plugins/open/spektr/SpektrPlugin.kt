@@ -1,12 +1,8 @@
-package org.khorum.oss.spektr.plugin
+package org.khorum.oss.plugins.open.spektr
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar.Companion.shadowJar
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.invoke
-import org.gradle.kotlin.dsl.register
-import org.khorum.oss.spektr.tasks.SpektrCacheAndVersionJarTask
 
 private const val EXCLUDE_PACKAGES = "org/khorum/oss/spektr/dsl/**"
 

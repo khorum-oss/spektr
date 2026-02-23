@@ -1,0 +1,149 @@
+name: Merge Main - Bump & Publish
+run-name: Bump & Publish changed modules by ${{ github.actor }}
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: merge-main
+  cancel-in-progress: false
+
+jobs:
+  # Phase 1: Detect which modules have changes
+  check-app:
+    uses: violabs/public-cicd/.github/workflows/check-changes.yml@main
+    with:
+      include-patterns: '^app/'
+
+  check-dsl:
+    uses: violabs/public-cicd/.github/workflows/check-changes.yml@main
+    with:
+      include-patterns: '^dsl/'
+
+  check-plugins:
+    uses: violabs/public-cicd/.github/workflows/check-changes.yml@main
+    with:
+      include-patterns: '^plugins/'
+
+  check-shared:
+    uses: violabs/public-cicd/.github/workflows/check-changes.yml@main
+    with:
+      include-patterns: '^(build\.gradle\.kts|settings\.gradle\.kts|buildSrc/)'
+
+  # Phase 2: Bump versions & publish (single job to avoid git push conflicts)
+  bump-and-publish:
+    needs: [check-app, check-dsl, check-plugins, check-shared]
+    if: >-
+      needs.check-app.outputs.has_changes == 'true' ||
+      needs.check-dsl.outputs.has_changes == 'true' ||
+      needs.check-plugins.outputs.has_changes == 'true' ||
+      needs.check-shared.outputs.has_changes == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Java & Gradle
+        uses: violabs/public-cicd/.github/actions/setup-java-gradle@main
+        with:
+          java-version: '21'
+
+      - name: Determine changed modules
+        id: changes
+        run: |
+          SHARED="${{ needs.check-shared.outputs.has_changes }}"
+          APP_CHANGED="${{ needs.check-app.outputs.has_changes }}"
+          DSL_CHANGED="${{ needs.check-dsl.outputs.has_changes }}"
+          PLUGINS_CHANGED="${{ needs.check-plugins.outputs.has_changes }}"
+
+          # Shared changes affect all modules
+          if [ "$SHARED" = "true" ]; then
+            APP_CHANGED="true"
+            DSL_CHANGED="true"
+            PLUGINS_CHANGED="true"
+          fi
+
+          echo "app=$APP_CHANGED" >> "$GITHUB_OUTPUT"
+          echo "dsl=$DSL_CHANGED" >> "$GITHUB_OUTPUT"
+          echo "plugins=$PLUGINS_CHANGED" >> "$GITHUB_OUTPUT"
+
+      - name: Bump VERSION files
+        run: |
+          bump_patch() {
+            local file="$1"
+            local version
+            version=$(cat "$file")
+            local major minor patch
+            IFS='.' read -r major minor patch <<< "$version"
+            patch=$((patch + 1))
+            echo "${major}.${minor}.${patch}" > "$file"
+            echo "Bumped $file: $version -> ${major}.${minor}.${patch}"
+          }
+
+          if [ "${{ steps.changes.outputs.app }}" = "true" ]; then
+            bump_patch app/VERSION
+          fi
+
+          if [ "${{ steps.changes.outputs.dsl }}" = "true" ]; then
+            bump_patch dsl/VERSION
+          fi
+
+          if [ "${{ steps.changes.outputs.plugins }}" = "true" ]; then
+            bump_patch plugins/VERSION
+          fi
+
+      - name: Commit & push version bumps
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add app/VERSION dsl/VERSION plugins/VERSION
+          git diff --cached --quiet && echo "No version changes to commit" && exit 0
+          git commit -m "chore: bump versions [skip ci]"
+          git push
+
+      - name: Publish DSL
+        if: steps.changes.outputs.dsl == 'true'
+        run: ./gradlew :dsl:uploadToDigitalOceanSpaces
+        env:
+          DO_SPACES_API_KEY: ${{ secrets.DO_SPACES_API_KEY }}
+          DO_SPACES_SECRET: ${{ secrets.DO_SPACES_SECRET }}
+
+      - name: Publish Plugins
+        if: steps.changes.outputs.plugins == 'true'
+        run: ./gradlew :plugins:uploadToDigitalOceanSpaces
+        env:
+          DO_SPACES_API_KEY: ${{ secrets.DO_SPACES_API_KEY }}
+          DO_SPACES_SECRET: ${{ secrets.DO_SPACES_SECRET }}
+
+      - name: Publish App artifact
+        if: steps.changes.outputs.app == 'true'
+        run: ./gradlew :app:uploadToDigitalOceanSpaces
+        env:
+          DO_SPACES_API_KEY: ${{ secrets.DO_SPACES_API_KEY }}
+          DO_SPACES_SECRET: ${{ secrets.DO_SPACES_SECRET }}
+
+      - name: Build & push Docker image
+        if: steps.changes.outputs.app == 'true'
+        env:
+          DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
+          DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          APP_VERSION=$(cat app/VERSION)
+          echo "Building Docker image with version: $APP_VERSION"
+
+          echo "$DOCKER_REGISTRY_TOKEN" | docker login ghcr.io -u "$DOCKER_REGISTRY_USERNAME" --password-stdin
+
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY}:${APP_VERSION}"
+          IMAGE_LATEST="ghcr.io/${GITHUB_REPOSITORY}:latest"
+
+          docker build -t "$IMAGE" -t "$IMAGE_LATEST" .
+          docker push "$IMAGE"
+          docker push "$IMAGE_LATEST"

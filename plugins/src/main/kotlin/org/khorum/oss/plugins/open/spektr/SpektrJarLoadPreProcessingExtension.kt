@@ -1,4 +1,4 @@
-package org.khorum.oss.spektr.plugin
+package org.khorum.oss.plugins.open.spektr
 
 open class SpektrJarLoadPreProcessingExtension {
     private val apiProvider: ApiProvider = ApiProvider()

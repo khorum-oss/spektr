@@ -33,6 +33,11 @@ repositories {
 }
 
 dependencies {
+    implementation("com.gradleup.shadow:shadow-gradle-plugin:9.3.1")
+
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("io.mockk:mockk:1.13.8") // For mocking in Kotlin
     testImplementation(gradleTestKit())
 }
 
@@ -66,12 +71,12 @@ mavenGeneratedArtifacts {
     description = """
             A plugin for configuring Spektr endpoints in Gradle projects.
         """
-    websiteUrl = "https://github.com/khorum-oss/spektr/tree/main/secrets"
+    websiteUrl = "https://github.com/khorum-oss/spektr/tree/main/plugins"
 
     licenses {
         license {
             name = "MIT License"
-            url = "https://www.apache.org/licenses/LICENSE-2.0"
+            url = "https://opensource.org/license/mit"
         }
     }
 

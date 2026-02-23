@@ -1,6 +1,6 @@
 
 plugins {
-    id("org.khorum.oss.spektr.plugin")
+//    id("org.khorum.oss.plugins.open.spektr")
 }
 
 val currentVersion = file("version.txt").readText().trim()
@@ -15,15 +15,15 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 }
 
-spektr {
-    apiProvider {
-        jarBaseName = "ghost-book-test-api"
-        versionFile = "version.txt"
-        dockerJarsDir = "examples/docker/endpoint-jars"
-    }
-}
+//spektr {
+//    apiProvider {
+//        jarBaseName = "ghost-book-test-api"
+//        versionFile = "version.txt"
+//        dockerJarsDir = "examples/docker/endpoint-jars"
+//    }
+//}
 
-tasks.build { dependsOn(tasks.cacheAndVersionJar) }
+//tasks.build { dependsOn(tasks.cacheAndVersionJar) }
 
 tasks.bootJar { enabled = false }
 

@@ -14,9 +14,9 @@ plugins {
 
 group = "org.khorum.oss"
 
-extra["dslVersion"] = "1.0.0"
-extra["spektrVersion"] = "1.0.0"
-extra["pluginVersion"] = "1.0.0"
+extra["dslVersion"] = file("dsl/VERSION").readText().trim()
+extra["spektrVersion"] = file("app/VERSION").readText().trim()
+extra["pluginVersion"] = file("plugins/VERSION").readText().trim()
 
 // Root project is not a Spring Boot application
 tasks.bootJar { enabled = false }
