@@ -2,7 +2,7 @@ package org.khorum.oss.spektr.ghostbook
 
 import org.junit.jupiter.api.Test
 import org.khorum.oss.spekter.examples.common.domain.Ghost
-import org.khorum.oss.spekter.examples.testcommon.WithSpektr
+import org.khorum.oss.spektr.test.WithSpektr
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
@@ -15,7 +15,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @WithSpektr(
-    endpointJarsPath = "../docker/endpoint-jars",
+    modules = [HauntedHouseTrackerApi::class],
     properties = ["haunted-house-tracker.base-url"]
 )
 class GhostEndpointTest @Autowired constructor(

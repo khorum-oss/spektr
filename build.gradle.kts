@@ -6,7 +6,7 @@ plugins {
 	id("io.gitlab.arturbosch.detekt") version "1.23.8"
 	id("org.jetbrains.dokka") version "1.9.20"
 	id("org.jetbrains.kotlinx.kover") version "0.7.6"
-	id("org.khorum.oss.plugins.open.publishing.maven-generated-artifacts") version "1.0.0" apply false
+	id("org.khorum.oss.plugins.open.publishing.maven-generated-artifacts") version "1.0.2" apply false
 	id("org.khorum.oss.plugins.open.publishing.digital-ocean-spaces") version "1.0.0" apply false
 	id("org.khorum.oss.plugins.open.secrets") version "1.0.0"
 	id("org.khorum.oss.plugins.open.pipeline") version "1.0.0" apply false
@@ -24,6 +24,9 @@ tasks.jar { enabled = false }
 
 repositories {
 	mavenCentral()
+	maven {
+		url = uri("https://open-reliquary.nyc3.cdn.digitaloceanspaces.com")
+	}
 }
 
 subprojects {
@@ -35,6 +38,9 @@ subprojects {
 
 	repositories {
 		mavenCentral()
+		maven {
+			url = uri("https://open-reliquary.nyc3.cdn.digitaloceanspaces.com")
+		}
 	}
 
 	dependencies {
