@@ -20,6 +20,14 @@ plugins {
 
 version = spektrVersion
 
+// Bridge Dokka v1 task names to v2 for maven-generated-artifacts plugin compatibility
+tasks.register("dokkaJavadoc") {
+    dependsOn("dokkaGeneratePublicationJavadoc")
+}
+tasks.register("dokkaHtml") {
+    dependsOn("dokkaGeneratePublicationHtml")
+}
+
 dependencies {
     implementation("org.khorum.oss.spektr:spektr-dsl:1.0.8")
 
