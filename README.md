@@ -22,6 +22,44 @@ See the [docs folder](docs/README.md) for detailed documentation:
 - **DSL-based configuration** - Define endpoints using a simple Kotlin DSL
 - **ServiceLoader discovery** - Automatically discovers `EndpointModule` implementations
 
+## Related Projects
+
+Spektr is composed of several repositories that work together:
+
+| Project | Description |
+|---------|-------------|
+| [spektr](https://github.com/khorum-oss/spektr) | The server application (this repo) |
+| [spektr-dsl](https://github.com/khorum-oss/spektr-dsl) | Kotlin DSL for defining REST and SOAP endpoints |
+| [spektr-gradle-plugin](https://github.com/khorum-oss/spektr-gradle-plugin) | Gradle plugin for building and versioning endpoint JARs |
+| [spektr-test](https://github.com/khorum-oss/spektr-test) | Testing utilities including Testcontainers support and the `@WithSpektr` annotation |
+
+### Repository Setup
+
+All Spektr artifacts are published to a custom Maven repository. Add it to your `settings.gradle.kts`:
+
+```kotlin
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+        maven {
+            url = uri("https://open-reliquary.nyc3.cdn.digitaloceanspaces.com")
+        }
+    }
+}
+```
+
+And to your `build.gradle.kts` `repositories` block for library dependencies:
+
+```kotlin
+repositories {
+    mavenCentral()
+    maven {
+        url = uri("https://open-reliquary.nyc3.cdn.digitaloceanspaces.com")
+    }
+}
+```
+
 ## Quick Start
 
 ### 1. Build the application
@@ -32,7 +70,25 @@ See the [docs folder](docs/README.md) for detailed documentation:
 
 ### 2. Create an endpoint JAR
 
-Implement the `EndpointModule` interface:
+Use the [spektr-gradle-plugin](https://github.com/khorum-oss/spektr-gradle-plugin) to simplify building endpoint JARs:
+
+```kotlin
+plugins {
+    id("org.khorum.oss.plugins.open.spektr") version "1.0.13"
+}
+
+dependencies {
+    compileOnly("org.khorum.oss.spektr:spektr-dsl:1.0.7")
+}
+
+spektr {
+    apiProvider {
+        jarBaseName = "my-endpoints"
+    }
+}
+```
+
+Then implement the `EndpointModule` interface from the [spektr-dsl](https://github.com/khorum-oss/spektr-dsl):
 
 ```kotlin
 package com.example.endpoints
@@ -455,6 +511,37 @@ logging:
   level:
     org.khorum.oss.spektr.service: DEBUG
 ```
+
+## Integration Testing
+
+The [spektr-test](https://github.com/khorum-oss/spektr-test) library provides Testcontainers support for using Spektr as a mock service in your integration tests:
+
+```kotlin
+dependencies {
+    testImplementation("org.khorum.oss.spektr:spektr-test:1.0.7")
+}
+```
+
+```kotlin
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@WithSpektr(
+    endpointJarsPath = "path/to/endpoint-jars",
+    properties = ["external-service.base-url"]
+)
+class MyIntegrationTest @Autowired constructor(
+    private val webTestClient: WebTestClient
+) {
+    @Test
+    fun `calls mocked external service`() {
+        webTestClient.get()
+            .uri("/my-endpoint")
+            .exchange()
+            .expectStatus().isOk
+    }
+}
+```
+
+See [Testing with Testcontainers](docs/testing.md) for full documentation.
 
 ## Development
 

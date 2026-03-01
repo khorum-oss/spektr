@@ -1,0 +1,137 @@
+name: Merge Main - Bump & Publish
+run-name: Bump & Publish by ${{ github.actor }}
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      bump-version:
+        description: 'Bump the patch version before publishing'
+        type: boolean
+        default: true
+
+concurrency:
+  group: merge-main
+  cancel-in-progress: false
+
+jobs:
+  version:
+    if: >-
+      github.event_name == 'push' ||
+      github.event.inputs.bump-version == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Bump app/VERSION
+        run: |
+          version=$(cat app/VERSION)
+          IFS='.' read -r major minor patch <<< "$version"
+          patch=$((patch + 1))
+          new_version="${major}.${minor}.${patch}"
+          echo "$new_version" > app/VERSION
+          echo "Bumped app/VERSION: $version -> $new_version"
+
+      - name: Commit & push version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add app/VERSION
+          git diff --cached --quiet && echo "No version changes to commit" && exit 0
+          git commit -m "chore: bump version [skip ci]"
+          git push
+
+  publish:
+    needs: version
+    if: always() && !failure() && !cancelled()
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.read-version.outputs.version }}
+    steps:
+      - name: Checkout latest
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Read version
+        id: read-version
+        run: echo "version=$(cat app/VERSION)" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Java & Gradle
+        uses: violabs/public-cicd/.github/actions/setup-java-gradle@main
+        with:
+          java-version: '21'
+
+      - name: Publish to DigitalOcean Spaces
+        run: ./gradlew :app:uploadToDigitalOceanSpaces --no-daemon
+        env:
+          DO_SPACES_API_KEY: ${{ secrets.DO_SPACES_API_KEY }}
+          DO_SPACES_SECRET: ${{ secrets.DO_SPACES_SECRET }}
+
+      - name: Build & push Docker image
+        env:
+          DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
+          DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          APP_VERSION=$(cat app/VERSION)
+          echo "Building Docker image with version: $APP_VERSION"
+
+          echo "$DOCKER_REGISTRY_TOKEN" | docker login ghcr.io -u "$DOCKER_REGISTRY_USERNAME" --password-stdin
+
+          IMAGE="ghcr.io/${GITHUB_REPOSITORY}:${APP_VERSION}"
+          IMAGE_LATEST="ghcr.io/${GITHUB_REPOSITORY}:latest"
+
+          docker build -t "$IMAGE" -t "$IMAGE_LATEST" .
+          docker push "$IMAGE"
+          docker push "$IMAGE_LATEST"
+
+  release:
+    needs: [ version, publish ]
+    if: always() && needs.publish.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout latest
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Create release tag
+        env:
+          VERSION: ${{ needs.publish.outputs.version }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PREV_TAG=$(git tag --sort=-v:refname | head -n 1)
+          if [ -n "$PREV_TAG" ]; then
+            NOTES=$(git log "${PREV_TAG}..HEAD" --pretty=format:"- %s" --no-merges)
+          else
+            NOTES=$(git log --pretty=format:"- %s" --no-merges -20)
+          fi
+          gh release create "v${VERSION}" \
+            --title "v${VERSION}" \
+            --notes "${NOTES}" \
+            --target main
+
+  notify-discord:
+    name: Notify Discord
+    needs: [ version, publish, release ]
+    if: always()
+    uses: violabs/public-cicd/.github/workflows/notify-discord.yml@main
+    with:
+      runs-on: ubuntu-latest
+      workflow_name: ${{ github.workflow }}
+      build_result: ${{ needs.publish.result == 'success' && 'success' || 'failure' }}
+      version: ${{ needs.publish.outputs.version || '' }}
+      custom_description: Published to open-reliquary & Docker
+    secrets:
+      DISCORD_WEBHOOK_URL: ${{ secrets.PUBLIC_RELEASE_DISCORD_WEBHOOK }}

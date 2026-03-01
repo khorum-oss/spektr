@@ -13,16 +13,18 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
+  build-check:
     uses: violabs/public-cicd/.github/workflows/gradle-build.yml@main
     with:
       java-version: '21'
       build-tasks: 'classes testClasses'
 
-
   test-app:
-    needs: build
+    needs: build-check
     uses: violabs/public-cicd/.github/workflows/gradle-unit-tests.yml@main
+    permissions:
+      contents: read
+      pull-requests: write
     with:
       java-version: '21'
       module: app
@@ -30,7 +32,7 @@ jobs:
       min-coverage-overall: 80
 
   test-examples:
-    needs: build
+    needs: build-check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -53,8 +55,28 @@ jobs:
       - name: Run haunted-house-tracker tests
         run: ./gradlew :examples:haunted-house-tracker:test
 
-  detekt:
-    needs: build
+  detekt-check:
+    needs: build-check
     uses: violabs/public-cicd/.github/workflows/gradle-detekt.yml@main
     with:
       java-version: '21'
+
+  notify-discord:
+    name: Notify Discord
+    needs:
+      - build-check
+      - test-app
+      - test-examples
+      - detekt-check
+    if: always()
+    uses: violabs/public-cicd/.github/workflows/notify-discord.yml@main
+    with:
+      runs-on: ubuntu-latest
+      workflow_name: ${{ github.workflow }}
+      build_result: ${{ needs.build-check.result }}
+      test_result: ${{ (needs.test-app.result == 'success' && needs.test-examples.result == 'success') && 'success' || 'failure' }}
+      detekt_result: ${{ needs.detekt-check.result }}
+      pr_title: ${{ github.event.pull_request.title }}
+      pr_number: ${{ github.event.pull_request.number }}
+    secrets:
+      DISCORD_WEBHOOK_URL: ${{ secrets.PUBLIC_PR_DISCORD_WEBHOOK }}

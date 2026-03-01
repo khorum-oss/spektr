@@ -6,12 +6,17 @@ plugins {
 	id("io.gitlab.arturbosch.detekt") version "1.23.8"
 	id("org.jetbrains.dokka") version "1.9.20"
 	id("org.jetbrains.kotlinx.kover") version "0.7.6"
+	id("org.khorum.oss.plugins.open.publishing.maven-generated-artifacts") version "1.0.4" apply false
+	id("org.khorum.oss.plugins.open.publishing.digital-ocean-spaces") version "1.0.4" apply false
+	id("org.khorum.oss.plugins.open.secrets") version "1.0.4"
+	id("org.khorum.oss.plugins.open.spektr") version "1.0.13" apply false
+	id("org.khorum.oss.plugins.open.pipeline") version "1.0.4" apply false
+	id("com.google.cloud.tools.jib") version "3.5.3" apply false
 }
 
 group = "org.khorum.oss"
 
-extra["dslVersion"] = "0.0.1"
-extra["spektrVersion"] = "1.0.0"
+extra["spektrVersion"] = file("app/VERSION").readText().trim()
 
 // Root project is not a Spring Boot application
 tasks.bootJar { enabled = false }
@@ -19,6 +24,9 @@ tasks.jar { enabled = false }
 
 repositories {
 	mavenCentral()
+	maven {
+		url = uri("https://open-reliquary.nyc3.cdn.digitaloceanspaces.com")
+	}
 }
 
 subprojects {
@@ -30,6 +38,9 @@ subprojects {
 
 	repositories {
 		mavenCentral()
+		maven {
+			url = uri("https://open-reliquary.nyc3.cdn.digitaloceanspaces.com")
+		}
 	}
 
 	dependencies {
@@ -44,6 +55,12 @@ subprojects {
 	// with kover-agent.args file during parallel builds (Kover 0.7.x bug)
 	extensions.configure<kotlinx.kover.gradle.plugin.dsl.KoverProjectExtension> {
 		disable()
+	}
+
+	java {
+		toolchain {
+			languageVersion = JavaLanguageVersion.of(21)
+		}
 	}
 }
 

@@ -3,10 +3,10 @@ package org.khorum.oss.spektr.hauntesthousetracker
 import org.junit.jupiter.api.Test
 import org.khorum.oss.spekter.examples.common.domain.CreateHauntedHouseRequest
 import org.khorum.oss.spekter.examples.common.domain.UsAddress
-import org.khorum.oss.spekter.examples.testcommon.TestClient
-import org.khorum.oss.spekter.examples.testcommon.WithSpektr
-import org.khorum.oss.spekter.examples.testcommon.configureShared
 import org.khorum.oss.spektr.hauntedhousetracker.HauntedHouseTrackerApplication
+import org.khorum.oss.spektr.test.SpektrTestClient
+import org.khorum.oss.spektr.test.WithSpektr
+import org.khorum.oss.spektr.test.spektrClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.webtestclient.autoconfigure.AutoConfigureWebTestClient
@@ -26,9 +26,7 @@ class HauntedHouseControllerTest @Autowired constructor(
 ) {
     private val uri = "/haunted-houses"
 
-    val testClient: TestClient by lazy {
-        configureShared(webTestClient, uri)
-    }
+    val testClient: SpektrTestClient = spektrClient(webTestClient, uri)
 
     private val address = UsAddress(
         streetLine1 = "123 Elm Street",
@@ -43,8 +41,7 @@ class HauntedHouseControllerTest @Autowired constructor(
         val request = CreateHauntedHouseRequest(address = address)
 
         //when
-        testClient.post {
-            withBody(request)
+        testClient.post(body = request) {
             //then
             expect {
                 hasOkStatus()
@@ -67,8 +64,7 @@ class HauntedHouseControllerTest @Autowired constructor(
         )
 
         //when
-        testClient.post {
-            withBody(request)
+        testClient.post(body = request) {
             //then
             expect {
                 hasOkStatus()

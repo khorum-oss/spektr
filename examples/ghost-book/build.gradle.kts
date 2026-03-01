@@ -15,7 +15,7 @@ buildscript {
 }
 
 dependencies {
-    implementation(project(":dsl"))
+    implementation("org.khorum.oss.spektr:spektr-dsl:1.0.8")
     implementation(project(":examples:common"))
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -34,7 +34,7 @@ dependencies {
 
     implementation("io.github.microutils:kotlin-logging:4.0.0-beta-2")
 
-    testImplementation(project(":examples:test-common"))
+    testImplementation("org.khorum.oss.spektr:spektr-test:1.0.8")
     testImplementation("org.springframework.boot:spring-boot-starter-actuator-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webflux-test")
     testImplementation("org.springframework.boot:spring-boot-testcontainers")
@@ -74,7 +74,7 @@ tasks.register("prepareTestEnv") {
     group = "verification"
     description = "Prepares test environment: builds Docker image and test-api JARs"
     dependsOn("buildSpektrImage")
-    dependsOn(":examples:ghost-book:test-api:shadowJar")
+    dependsOn(":examples:ghost-book:test-api:jar")
 }
 
 tasks.test {

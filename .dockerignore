@@ -31,3 +31,5 @@ LICENSE
 # Local config
 *.local
 .env
+
+secret.properties

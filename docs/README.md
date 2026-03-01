@@ -12,3 +12,9 @@ This folder contains documentation for Spektr and its example applications.
 
 - [Main README](../README.md) - Getting started with Spektr
 - [DSL Reference](../README.md#rest-dsl-reference) - REST and SOAP DSL documentation
+
+## Related Projects
+
+- [spektr-dsl](https://github.com/khorum-oss/spektr-dsl) - Kotlin DSL for defining endpoints
+- [spektr-gradle-plugin](https://github.com/khorum-oss/spektr-gradle-plugin) - Gradle plugin for building endpoint JARs
+- [spektr-test](https://github.com/khorum-oss/spektr-test) - Testing utilities (Testcontainers, `@WithSpektr`)

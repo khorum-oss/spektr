@@ -1,6 +1,6 @@
 
 plugins {
-    id("org.khorum.oss.spektr.plugin")
+    id("org.khorum.oss.plugins.open.spektr")
 }
 
 val currentVersion = file("version.txt").readText().trim()
@@ -9,7 +9,7 @@ version = currentVersion
 group = "org.khorum.oss.spektr.haunted-house-tracker"
 
 dependencies {
-    implementation(project(":dsl"))
+    implementation("org.khorum.oss.spektr:spektr-dsl:1.0.8")
     implementation(project(":examples:common"))
     implementation("tools.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")

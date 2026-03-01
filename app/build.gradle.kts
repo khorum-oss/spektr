@@ -1,4 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.khorum.oss.plugins.open.publishing.digitalocean.domain.uploadToDigitalOceanSpaces
+import org.khorum.oss.plugins.open.publishing.mavengenerated.domain.mavenGeneratedArtifacts
+import org.khorum.oss.plugins.open.secrets.getPropertyOrEnv
+import kotlin.apply
 
 val spektrVersion: String by rootProject.extra
 
@@ -7,12 +11,15 @@ plugins {
     kotlin("plugin.spring") version "2.3.0"
     id("org.springframework.boot") version "4.1.0-M1"
     id("io.spring.dependency-management") version "1.1.7"
+    id("org.khorum.oss.plugins.open.publishing.maven-generated-artifacts")
+    id("org.khorum.oss.plugins.open.publishing.digital-ocean-spaces")
+    id("com.google.cloud.tools.jib")
 }
 
 version = spektrVersion
 
 dependencies {
-    implementation(project(":dsl"))
+    implementation("org.khorum.oss.spektr:spektr-dsl:1.0.8")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
@@ -42,11 +49,92 @@ dependencies {
     testImplementation("io.projectreactor:reactor-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
+
 val compileKotlin: KotlinCompile by tasks
+
 compileKotlin.compilerOptions {
     freeCompilerArgs.set(listOf("-Xannotation-default-target=param-property"))
 }
 
+
+digitalOceanSpacesPublishing {
+    bucket = "open-reliquary"
+    accessKey = project.getPropertyOrEnv("spaces.key", "DO_SPACES_API_KEY")
+    secretKey = project.getPropertyOrEnv("spaces.secret", "DO_SPACES_SECRET")
+    publishedVersion = version.toString()
+    isPlugin = true
+    dryRun = false
+}
+
+tasks.uploadToDigitalOceanSpaces?.apply {
+    val task: Task = tasks.mavenGeneratedArtifacts ?: throw Exception("mavenGeneratedArtifacts task not found")
+    dependsOn(task)
+}
+
+mavenGeneratedArtifacts {
+    publicationName = "digitalOceanSpaces"  // Must match the name expected by the DO Spaces plugin
+    name = "Spektr App"
+    description = """
+            An application for mocking out APIs.
+        """
+    websiteUrl = "https://github.com/khorum-oss/spektr/tree/main/app"
+
+    licenses {
+        license {
+            name = "MIT License"
+            url = "https://opensource.org/license/mit"
+        }
+    }
+
+    developers {
+        developer {
+            id = "khorum-oss"
+            name = "Khorum OSS Team"
+            email = "khorum.oss@gmail.com"
+            organization = "Khorum OSS"
+        }
+    }
+
+    scm {
+        connection.set("https://github.com/khorum-oss/spektr.git")
+    }
+}
+
 tasks.test {
     useJUnitPlatform()
+}
+
+jib {
+    from {
+        image = "eclipse-temurin:21-jre-alpine"
+        platforms {
+            platform {
+                architecture = "amd64"
+                os = "linux"
+            }
+            platform {
+                architecture = "arm64"
+                os = "linux"
+            }
+        }
+    }
+    to {
+        image = "ghcr.io/khorum-oss/spektr"
+        tags = setOf("latest", version.toString())
+    }
+    container {
+        ports = listOf("8080")
+        environment = mapOf(
+            "ENDPOINT_JARS_DIR" to "/app/endpoint-jars"
+        )
+        creationTime.set("USE_CURRENT_TIMESTAMP")
+    }
+    extraDirectories {
+        paths {
+            path {
+                setFrom("src/main/jib")
+                into = "/"
+            }
+        }
+    }
 }

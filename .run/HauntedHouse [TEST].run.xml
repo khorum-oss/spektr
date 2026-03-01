@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="HauntedHouse [TEST]" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
     <option name="ACTIVE_PROFILES" value="test" />
-    <module name="Projects.spektr.examples.haunted-house-tracker.main" />
+    <module name="khorum.spektr.examples.haunted-house-tracker.main~1" />
     <option name="SPRING_BOOT_MAIN_CLASS" value="org.khorum.oss.spektr.hauntedhousetracker.HauntedHouseTrackerApplication" />
     <method v="2">
       <option name="Make" enabled="true" />
