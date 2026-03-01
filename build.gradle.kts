@@ -4,8 +4,6 @@ plugins {
 	id("org.springframework.boot") version "4.1.0-M1"
 	id("io.spring.dependency-management") version "1.1.7"
 	id("io.gitlab.arturbosch.detekt") version "1.23.8"
-	id("org.jetbrains.dokka") version "2.1.0" apply false
-	id("org.jetbrains.dokka-javadoc") version "2.1.0" apply false
 	id("org.jetbrains.kotlinx.kover") version "0.7.6"
 	id("org.khorum.oss.plugins.open.publishing.maven-generated-artifacts") version "1.0.4" apply false
 	id("org.khorum.oss.plugins.open.publishing.digital-ocean-spaces") version "1.0.4" apply false

@@ -11,8 +11,6 @@ plugins {
     kotlin("plugin.spring") version "2.3.0"
     id("org.springframework.boot") version "4.1.0-M1"
     id("io.spring.dependency-management") version "1.1.7"
-    id("org.jetbrains.dokka")
-    id("org.jetbrains.dokka-javadoc")
     id("org.khorum.oss.plugins.open.publishing.maven-generated-artifacts")
     id("org.khorum.oss.plugins.open.publishing.digital-ocean-spaces")
     id("com.google.cloud.tools.jib")
@@ -58,6 +56,11 @@ compileKotlin.compilerOptions {
     freeCompilerArgs.set(listOf("-Xannotation-default-target=param-property"))
 }
 
+// Provide javadoc jar without Dokka to avoid V1/V2 task migration conflicts.
+// The maven-generated-artifacts plugin expects this for the Maven publication.
+val dokkaJavadocJar by tasks.registering(Jar::class) {
+    archiveClassifier.set("javadoc")
+}
 
 digitalOceanSpacesPublishing {
     bucket = "open-reliquary"
