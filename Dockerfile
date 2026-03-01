@@ -11,6 +11,7 @@ COPY settings.gradle.kts .
 
 # Copy module build files
 COPY app/build.gradle.kts app/
+COPY app/VERSION app/
 
 # Create stub modules required by settings.gradle.kts (we only build app)
 RUN mkdir -p examples examples/common examples/ghost-book examples/ghost-book/test-api \
