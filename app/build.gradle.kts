@@ -13,6 +13,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
     id("org.khorum.oss.plugins.open.publishing.maven-generated-artifacts")
     id("org.khorum.oss.plugins.open.publishing.digital-ocean-spaces")
+    id("com.google.cloud.tools.jib")
 }
 
 version = spektrVersion
@@ -101,4 +102,39 @@ mavenGeneratedArtifacts {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+jib {
+    from {
+        image = "eclipse-temurin:21-jre-alpine"
+        platforms {
+            platform {
+                architecture = "amd64"
+                os = "linux"
+            }
+            platform {
+                architecture = "arm64"
+                os = "linux"
+            }
+        }
+    }
+    to {
+        image = "ghcr.io/khorum-oss/spektr"
+        tags = setOf("latest", version.toString())
+    }
+    container {
+        ports = listOf("8080")
+        environment = mapOf(
+            "ENDPOINT_JARS_DIR" to "/app/endpoint-jars"
+        )
+        creationTime.set("USE_CURRENT_TIMESTAMP")
+    }
+    extraDirectories {
+        paths {
+            path {
+                setFrom("src/main/jib")
+                into = "/"
+            }
+        }
+    }
 }

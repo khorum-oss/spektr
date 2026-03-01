@@ -11,6 +11,7 @@ plugins {
 	id("org.khorum.oss.plugins.open.secrets") version "1.0.4"
 	id("org.khorum.oss.plugins.open.spektr") version "1.0.13" apply false
 	id("org.khorum.oss.plugins.open.pipeline") version "1.0.4" apply false
+	id("com.google.cloud.tools.jib") version "3.5.3" apply false
 }
 
 group = "org.khorum.oss"
