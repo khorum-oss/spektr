@@ -13,7 +13,7 @@ on:
         default: true
 
 concurrency:
-  group: merge-main
+  group: merge-main-v2
   cancel-in-progress: false
 
 jobs:
@@ -21,32 +21,11 @@ jobs:
     if: >-
       github.event_name == 'push' ||
       github.event.inputs.bump-version == 'true'
-    runs-on: ubuntu-latest
+    uses: violabs/public-cicd/.github/workflows/version-bump.yml@main
     permissions:
       contents: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Bump app/VERSION
-        run: |
-          version=$(cat app/VERSION)
-          IFS='.' read -r major minor patch <<< "$version"
-          patch=$((patch + 1))
-          new_version="${major}.${minor}.${patch}"
-          echo "$new_version" > app/VERSION
-          echo "Bumped app/VERSION: $version -> $new_version"
-
-      - name: Commit & push version bump
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add app/VERSION
-          git diff --cached --quiet && echo "No version changes to commit" && exit 0
-          git commit -m "chore: bump version [skip ci]"
-          git push
+    with:
+      version-file: 'app/VERSION'
 
   publish:
     needs: version
