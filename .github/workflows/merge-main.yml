@@ -1,136 +1,81 @@
 name: Merge Main - Bump & Publish
-run-name: Bump & Publish changed modules by ${{ github.actor }}
+run-name: Bump & Publish by ${{ github.actor }}
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      bump-version:
+        description: 'Bump the patch version before publishing'
+        type: boolean
+        default: true
 
 concurrency:
   group: merge-main
   cancel-in-progress: false
 
 jobs:
-  # Phase 1: Detect which modules have changes
-  check-app:
-    uses: violabs/public-cicd/.github/workflows/check-changes.yml@main
-    with:
-      include-patterns: '^app/'
-
-  check-dsl:
-    uses: violabs/public-cicd/.github/workflows/check-changes.yml@main
-    with:
-      include-patterns: '^dsl/'
-
-  check-plugins:
-    uses: violabs/public-cicd/.github/workflows/check-changes.yml@main
-    with:
-      include-patterns: '^plugins/'
-
-  check-shared:
-    uses: violabs/public-cicd/.github/workflows/check-changes.yml@main
-    with:
-      include-patterns: '^(build\.gradle\.kts|settings\.gradle\.kts|buildSrc/)'
-
-  # Phase 2: Bump versions & publish (single job to avoid git push conflicts)
-  bump-and-publish:
-    needs: [check-app, check-dsl, check-plugins, check-shared]
+  version:
     if: >-
-      needs.check-app.outputs.has_changes == 'true' ||
-      needs.check-dsl.outputs.has_changes == 'true' ||
-      needs.check-plugins.outputs.has_changes == 'true' ||
-      needs.check-shared.outputs.has_changes == 'true'
+      github.event_name == 'push' ||
+      github.event.inputs.bump-version == 'true'
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      packages: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Bump app/VERSION
+        run: |
+          version=$(cat app/VERSION)
+          IFS='.' read -r major minor patch <<< "$version"
+          patch=$((patch + 1))
+          new_version="${major}.${minor}.${patch}"
+          echo "$new_version" > app/VERSION
+          echo "Bumped app/VERSION: $version -> $new_version"
+
+      - name: Commit & push version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add app/VERSION
+          git diff --cached --quiet && echo "No version changes to commit" && exit 0
+          git commit -m "chore: bump version [skip ci]"
+          git push
+
+  publish:
+    needs: version
+    if: always() && !failure() && !cancelled()
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.read-version.outputs.version }}
+    steps:
+      - name: Checkout latest
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Read version
+        id: read-version
+        run: echo "version=$(cat app/VERSION)" >> "$GITHUB_OUTPUT"
+
       - name: Setup Java & Gradle
         uses: violabs/public-cicd/.github/actions/setup-java-gradle@main
         with:
           java-version: '21'
 
-      - name: Determine changed modules
-        id: changes
-        run: |
-          SHARED="${{ needs.check-shared.outputs.has_changes }}"
-          APP_CHANGED="${{ needs.check-app.outputs.has_changes }}"
-          DSL_CHANGED="${{ needs.check-dsl.outputs.has_changes }}"
-          PLUGINS_CHANGED="${{ needs.check-plugins.outputs.has_changes }}"
-
-          # Shared changes affect all modules
-          if [ "$SHARED" = "true" ]; then
-            APP_CHANGED="true"
-            DSL_CHANGED="true"
-            PLUGINS_CHANGED="true"
-          fi
-
-          echo "app=$APP_CHANGED" >> "$GITHUB_OUTPUT"
-          echo "dsl=$DSL_CHANGED" >> "$GITHUB_OUTPUT"
-          echo "plugins=$PLUGINS_CHANGED" >> "$GITHUB_OUTPUT"
-
-      - name: Bump VERSION files
-        run: |
-          bump_patch() {
-            local file="$1"
-            local version
-            version=$(cat "$file")
-            local major minor patch
-            IFS='.' read -r major minor patch <<< "$version"
-            patch=$((patch + 1))
-            echo "${major}.${minor}.${patch}" > "$file"
-            echo "Bumped $file: $version -> ${major}.${minor}.${patch}"
-          }
-
-          if [ "${{ steps.changes.outputs.app }}" = "true" ]; then
-            bump_patch app/VERSION
-          fi
-
-          if [ "${{ steps.changes.outputs.dsl }}" = "true" ]; then
-            bump_patch dsl/VERSION
-          fi
-
-          if [ "${{ steps.changes.outputs.plugins }}" = "true" ]; then
-            bump_patch plugins/VERSION
-          fi
-
-      - name: Commit & push version bumps
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add app/VERSION dsl/VERSION plugins/VERSION
-          git diff --cached --quiet && echo "No version changes to commit" && exit 0
-          git commit -m "chore: bump versions [skip ci]"
-          git push
-
-      - name: Publish DSL
-        if: steps.changes.outputs.dsl == 'true'
-        run: ./gradlew :dsl:uploadToDigitalOceanSpaces
-        env:
-          DO_SPACES_API_KEY: ${{ secrets.DO_SPACES_API_KEY }}
-          DO_SPACES_SECRET: ${{ secrets.DO_SPACES_SECRET }}
-
-      - name: Publish Plugins
-        if: steps.changes.outputs.plugins == 'true'
-        run: ./gradlew :plugins:uploadToDigitalOceanSpaces
-        env:
-          DO_SPACES_API_KEY: ${{ secrets.DO_SPACES_API_KEY }}
-          DO_SPACES_SECRET: ${{ secrets.DO_SPACES_SECRET }}
-
-      - name: Publish App artifact
-        if: steps.changes.outputs.app == 'true'
-        run: ./gradlew :app:uploadToDigitalOceanSpaces
+      - name: Publish to DigitalOcean Spaces
+        run: ./gradlew :app:uploadToDigitalOceanSpaces --no-daemon
         env:
           DO_SPACES_API_KEY: ${{ secrets.DO_SPACES_API_KEY }}
           DO_SPACES_SECRET: ${{ secrets.DO_SPACES_SECRET }}
 
       - name: Build & push Docker image
-        if: steps.changes.outputs.app == 'true'
         env:
           DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
           DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
@@ -147,3 +92,46 @@ jobs:
           docker build -t "$IMAGE" -t "$IMAGE_LATEST" .
           docker push "$IMAGE"
           docker push "$IMAGE_LATEST"
+
+  release:
+    needs: [ version, publish ]
+    if: always() && needs.publish.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout latest
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Create release tag
+        env:
+          VERSION: ${{ needs.publish.outputs.version }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PREV_TAG=$(git tag --sort=-v:refname | head -n 1)
+          if [ -n "$PREV_TAG" ]; then
+            NOTES=$(git log "${PREV_TAG}..HEAD" --pretty=format:"- %s" --no-merges)
+          else
+            NOTES=$(git log --pretty=format:"- %s" --no-merges -20)
+          fi
+          gh release create "v${VERSION}" \
+            --title "v${VERSION}" \
+            --notes "${NOTES}" \
+            --target main
+
+  notify-discord:
+    name: Notify Discord
+    needs: [ version, publish, release ]
+    if: always()
+    uses: violabs/public-cicd/.github/workflows/notify-discord.yml@main
+    with:
+      runs-on: ubuntu-latest
+      workflow_name: ${{ github.workflow }}
+      build_result: ${{ needs.publish.result == 'success' && 'success' || 'failure' }}
+      version: ${{ needs.publish.outputs.version || '' }}
+      custom_description: Published to open-reliquary & Docker
+    secrets:
+      DISCORD_WEBHOOK_URL: ${{ secrets.PUBLIC_RELEASE_DISCORD_WEBHOOK }}

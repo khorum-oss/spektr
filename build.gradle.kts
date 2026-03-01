@@ -6,17 +6,16 @@ plugins {
 	id("io.gitlab.arturbosch.detekt") version "1.23.8"
 	id("org.jetbrains.dokka") version "1.9.20"
 	id("org.jetbrains.kotlinx.kover") version "0.7.6"
-	id("org.khorum.oss.plugins.open.publishing.maven-generated-artifacts") version "1.0.2" apply false
-	id("org.khorum.oss.plugins.open.publishing.digital-ocean-spaces") version "1.0.0" apply false
-	id("org.khorum.oss.plugins.open.secrets") version "1.0.0"
-	id("org.khorum.oss.plugins.open.pipeline") version "1.0.0" apply false
+	id("org.khorum.oss.plugins.open.publishing.maven-generated-artifacts") version "1.0.4" apply false
+	id("org.khorum.oss.plugins.open.publishing.digital-ocean-spaces") version "1.0.4" apply false
+	id("org.khorum.oss.plugins.open.secrets") version "1.0.4"
+	id("org.khorum.oss.plugins.open.spektr") version "1.0.13" apply false
+	id("org.khorum.oss.plugins.open.pipeline") version "1.0.4" apply false
 }
 
 group = "org.khorum.oss"
 
-extra["dslVersion"] = file("dsl/VERSION").readText().trim()
 extra["spektrVersion"] = file("app/VERSION").readText().trim()
-extra["pluginVersion"] = file("plugins/VERSION").readText().trim()
 
 // Root project is not a Spring Boot application
 tasks.bootJar { enabled = false }

@@ -8,7 +8,7 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":dsl"))
+    implementation("org.khorum.oss.spektr:spektr-dsl:1.0.8")
     implementation(project(":examples:common"))
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")

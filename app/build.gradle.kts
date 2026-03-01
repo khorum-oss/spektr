@@ -18,7 +18,7 @@ plugins {
 version = spektrVersion
 
 dependencies {
-    implementation(project(":dsl"))
+    implementation("org.khorum.oss.spektr:spektr-dsl:1.0.8")
 
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
