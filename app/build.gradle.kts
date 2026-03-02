@@ -129,8 +129,12 @@ jib {
         }
     }
     to {
-        image = "ghcr.io/khorum-oss/spektr"
+        image = "docker.io/khorum/spektr"
         tags = setOf("latest", version.toString())
+        auth {
+            username = project.getPropertyOrEnv("docker-registry.username", "DOCKER_REGISTRY_USERNAME")
+            password = project.getPropertyOrEnv("docker-registry.token", "DOCKER_REGISTRY_TOKEN")
+        }
     }
     container {
         ports = listOf("8080")

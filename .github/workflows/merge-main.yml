@@ -54,23 +54,11 @@ jobs:
           DO_SPACES_API_KEY: ${{ secrets.DO_SPACES_API_KEY }}
           DO_SPACES_SECRET: ${{ secrets.DO_SPACES_SECRET }}
 
-      - name: Build & push Docker image
+      - name: Build & push Docker image (multi-arch)
+        run: ./gradlew :app:jib --no-daemon
         env:
           DOCKER_REGISTRY_TOKEN: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
           DOCKER_REGISTRY_USERNAME: ${{ secrets.DOCKER_REGISTRY_USERNAME }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-        run: |
-          APP_VERSION=$(cat app/VERSION)
-          echo "Building Docker image with version: $APP_VERSION"
-
-          echo "$DOCKER_REGISTRY_TOKEN" | docker login ghcr.io -u "$DOCKER_REGISTRY_USERNAME" --password-stdin
-
-          IMAGE="ghcr.io/${GITHUB_REPOSITORY}:${APP_VERSION}"
-          IMAGE_LATEST="ghcr.io/${GITHUB_REPOSITORY}:latest"
-
-          docker build -t "$IMAGE" -t "$IMAGE_LATEST" .
-          docker push "$IMAGE"
-          docker push "$IMAGE_LATEST"
 
   release:
     needs: [ version, publish ]
