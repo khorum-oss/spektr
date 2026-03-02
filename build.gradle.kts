@@ -37,6 +37,9 @@ subprojects {
 	apply(plugin = "io.spring.dependency-management")
 	apply(plugin = "org.jetbrains.kotlinx.kover")
 
+	// Override jackson-bom to fix GHSA-72hv-8253-57qq (async parser DoS)
+	ext["jackson-bom.version"] = "3.1.0"
+
 	repositories {
 		mavenCentral()
 		maven {

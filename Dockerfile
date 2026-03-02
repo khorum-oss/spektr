@@ -38,6 +38,9 @@ FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
+# Patch OS-level vulnerabilities (CVE-2026-25646: libpng)
+RUN apk upgrade --no-cache
+
 # Create directory for endpoint JARs
 RUN mkdir -p /app/endpoint-jars
 
