@@ -8,6 +8,7 @@ COPY gradlew .
 COPY gradle gradle
 COPY build.gradle.kts .
 COPY settings.gradle.kts .
+COPY gradle.properties .
 
 # Copy module build files
 COPY app/build.gradle.kts app/

@@ -20,6 +20,14 @@ plugins {
 
 version = spektrVersion
 
+// Bridge Dokka v1 task names to v2 for maven-generated-artifacts plugin compatibility
+tasks.register("dokkaJavadoc") {
+    dependsOn("dokkaGeneratePublicationJavadoc")
+}
+tasks.register("dokkaHtml") {
+    dependsOn("dokkaGeneratePublicationHtml")
+}
+
 dependencies {
     implementation("org.khorum.oss.spektr:spektr-dsl:1.0.8")
 
@@ -121,8 +129,12 @@ jib {
         }
     }
     to {
-        image = "ghcr.io/khorum-oss/spektr"
+        image = "docker.io/khorum/spektr"
         tags = setOf("latest", version.toString())
+        auth {
+            username = project.getPropertyOrEnv("docker-registry.username", "DOCKER_REGISTRY_USERNAME")
+            password = project.getPropertyOrEnv("docker-registry.token", "DOCKER_REGISTRY_TOKEN")
+        }
     }
     container {
         ports = listOf("8080")
