@@ -18,11 +18,12 @@ import org.springframework.test.web.reactive.server.WebTestClient
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @WithSpektr(
+    image = "khorum/spektr:latest",
     endpointJarsPath = "../docker/endpoint-jars",
     properties = ["ghost-book.base-url"]
 )
 class HauntedHouseControllerTest @Autowired constructor(
-    private val webTestClient: WebTestClient
+    webTestClient: WebTestClient
 ) {
     private val uri = "/haunted-houses"
 

@@ -15,6 +15,7 @@ import org.springframework.test.web.reactive.server.WebTestClient
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @WithSpektr(
+    image = "khorum/spektr:latest",
     modules = [HauntedHouseTrackerApi::class],
     properties = ["haunted-house-tracker.base-url"]
 )
