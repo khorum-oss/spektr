@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.server.HandlerFunction
 import org.springframework.web.reactive.function.server.RouterFunction
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
+import org.springframework.web.reactive.function.server.bodyToMono
 import org.springframework.web.util.pattern.PathPatternParser
 import reactor.core.publisher.Mono
 import tools.jackson.databind.ObjectMapper
@@ -42,43 +43,38 @@ class DynamicRouterManager(
 
             if (matched != null) {
                 log.info("Matched endpoint: {} {} -> {}", matched.method, matched.path, request.path())
-                Mono.just(HandlerFunction { req ->
-                    req.bodyToMono(String::class.java)
-                        .defaultIfEmpty("")
-                        .flatMap { body ->
-                            val dynamicReq = toDynamicRequest(req, matched.path, body.ifEmpty { null })
-
-                            // Log path variables if present
-                            if (dynamicReq.pathVariables.isNotEmpty()) {
-                                log.info("Path variables: {}", dynamicReq.pathVariables)
-                            }
-
-                            // Log query params if present
-                            if (dynamicReq.queryParams.isNotEmpty()) {
-                                log.info("Query params: {}", dynamicReq.queryParams)
-                            }
-
-                            // Log request body if present
-                            if (body.isNotEmpty()) {
-                                log.info("Request body: {} bytes", body.length)
-                                log.debug("Request body content:\n{}", body)
-                            }
-
-                            log.debug("Headers: {}", dynamicReq.headers.keys)
-
-                            val dynamicResp = matched.handler.handle(dynamicReq)
-                            log.info("Returning response: status={}, body type={}",
-                                dynamicResp.status, dynamicResp.body?.javaClass?.simpleName ?: "null")
-                            log.debug("Response body: {}", dynamicResp.body)
-
-                            buildServerResponse(dynamicResp)
-                        }
-                })
+                Mono.just(HandlerFunction { req -> handleMatchedRequest(req, matched) })
             } else {
                 log.debug("No matching endpoint for: {} {}", request.method(), request.path())
                 Mono.empty()
             }
         }
+    }
+
+    private fun handleMatchedRequest(req: ServerRequest, endpoint: RestEndpointDefinition): Mono<ServerResponse> {
+        return req.bodyToMono<String>()
+            .defaultIfEmpty("")
+            .flatMap { body ->
+                val dynamicReq = toDynamicRequest(req, endpoint.path, body.ifEmpty { null })
+                logRequestDetails(dynamicReq, body)
+
+                val dynamicResp = endpoint.handler.handle(dynamicReq)
+                log.info("Returning response: status={}, body type={}",
+                    dynamicResp.status, dynamicResp.body?.javaClass?.simpleName ?: "null")
+                log.debug("Response body: {}", dynamicResp.body)
+
+                buildServerResponse(dynamicResp)
+            }
+    }
+
+    private fun logRequestDetails(req: DynamicRequest, body: String) {
+        if (req.pathVariables.isNotEmpty()) log.info("Path variables: {}", req.pathVariables)
+        if (req.queryParams.isNotEmpty()) log.info("Query params: {}", req.queryParams)
+        if (body.isNotEmpty()) {
+            log.info("Request body: {} bytes", body.length)
+            log.debug("Request body content:\n{}", body)
+        }
+        log.debug("Headers: {}", req.headers.keys)
     }
 
     private fun buildServerResponse(resp: DynamicResponse): Mono<ServerResponse> {

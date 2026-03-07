@@ -52,7 +52,7 @@ class GhostBookApi : EndpointModule, Loggable {
         }
 
         // List all ghosts
-        operation("/ws", "ListGhosts") { request ->
+        operation("/ws", "ListGhosts") { _ ->
             log.info { "Listing ghosts" }
 
             SoapResponse(
