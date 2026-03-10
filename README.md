@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/khorum-oss/spektr/actions/workflows/pr-main.yml/badge.svg)](https://github.com/khorum-oss/spektr/actions/workflows/pr-main.yml)
 [![codecov](https://codecov.io/gh/khorum-oss/spektr/branch/main/graph/badge.svg)](https://codecov.io/gh/khorum-oss/spektr)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=khorum-oss_spektr&metric=alert_status)](https://sonarcloud.io/project/overview?id=khorum-oss_spektr)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=khorum-oss_spektr&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=khorum-oss_spektr)
 [![CodeQL](https://github.com/khorum-oss/spektr/actions/workflows/code-ql.yml/badge.svg)](https://github.com/khorum-oss/spektr/actions/workflows/code-ql.yml)
 
 A dynamic endpoint server that loads REST and SOAP endpoints from external JAR files at runtime.
