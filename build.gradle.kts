@@ -48,8 +48,10 @@ subprojects {
 		}
 	}
 
+	val loggingVersion = "4.0.0-beta-2"
+
 	dependencies {
-		implementation("io.github.microutils:kotlin-logging:4.0.0-beta-2")
+		implementation("io.github.microutils:kotlin-logging:$loggingVersion")
 
 		testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 		testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")

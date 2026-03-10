@@ -96,8 +96,7 @@ class DynamicRouterManager(
     private fun toDynamicRequest(req: ServerRequest, pattern: String, body: String? = null): DynamicRequest {
         val pathPattern = PathPatternParser().parse(pattern)
         val pathContainer = PathContainer.parsePath(req.path())
-        val pathVars = pathPattern.matchAndExtract(pathContainer)
-            ?.uriVariables ?: emptyMap()
+        val pathVars = pathPattern.matchAndExtract(pathContainer)?.uriVariables
 
         val headers = req.headers()
             .asHttpHeaders()
@@ -106,7 +105,7 @@ class DynamicRouterManager(
 
         return DynamicRequest(
             headers = headers,
-            pathVariables = pathVars,
+            pathVariables = pathVars ?: emptyMap(),
             queryParams = req.queryParams().toMap(),
             body = body?.ifEmpty { null }
         )
