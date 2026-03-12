@@ -7,11 +7,12 @@ plugins {
 	id("org.jetbrains.dokka") version "2.1.0" apply false
 	id("org.jetbrains.dokka-javadoc") version "2.1.0" apply false
 	id("org.jetbrains.kotlinx.kover") version "0.7.6"
-	id("org.khorum.oss.plugins.open.publishing.maven-generated-artifacts") version "1.0.4" apply false
-	id("org.khorum.oss.plugins.open.publishing.digital-ocean-spaces") version "1.0.4" apply false
-	id("org.khorum.oss.plugins.open.secrets") version "1.0.4"
-	id("org.khorum.oss.plugins.open.spektr") version "1.0.13" apply false
-	id("org.khorum.oss.plugins.open.pipeline") version "1.0.4" apply false
+	id("org.sonarqube") version "7.0.0.6105"
+	id("org.khorum.oss.plugins.open.publishing.maven-generated-artifacts") version "1.0.3" apply false
+	id("org.khorum.oss.plugins.open.publishing.digital-ocean-spaces") version "1.0.3" apply false
+	id("org.khorum.oss.plugins.open.secrets") version "1.0.0"
+	id("org.khorum.oss.plugins.open.spektr") version "1.0.17" apply false
+	id("org.khorum.oss.plugins.open.pipeline") version "1.0.0" apply false
 	id("com.google.cloud.tools.jib") version "3.5.3" apply false
 }
 
@@ -47,8 +48,10 @@ subprojects {
 		}
 	}
 
+	val loggingVersion = "4.0.0-beta-2"
+
 	dependencies {
-		implementation("io.github.microutils:kotlin-logging:4.0.0-beta-2")
+		implementation("io.github.microutils:kotlin-logging:$loggingVersion")
 
 		testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 		testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
@@ -74,4 +77,14 @@ detekt {
 	config.setFrom(files("$rootDir/detekt.yml"))
 	baseline = file("$rootDir/detekt-baseline.xml")
 	parallel = true
+}
+
+sonar {
+	properties {
+		property("sonar.projectKey", "khorum-oss_spektr")
+		property("sonar.organization", "khorum-oss")
+		property("sonar.host.url", "https://sonarcloud.io")
+		property("sonar.coverage.jacoco.xmlReportPaths",
+			"${layout.buildDirectory.get()}/reports/kover/report.xml")
+	}
 }

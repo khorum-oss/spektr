@@ -24,9 +24,7 @@ class GhostService(
 
         val exists = ghostRepo.getGhost(ghost.type) != null
 
-        if (exists) {
-            throw IllegalArgumentException("Ghost already exists")
-        }
+        require(!exists) { "Ghost already exists" }
 
         val houses = request.addresses
             ?.map { CreateHauntedHouseRequest(address = it) }

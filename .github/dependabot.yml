@@ -1,0 +1,45 @@
+version: 2
+
+updates:
+  # --- Gradle dependencies ---
+  - package-ecosystem: "gradle"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+    open-pull-requests-limit: 10
+    groups:
+      # Group Spring Boot updates into a single PR
+      spring-boot:
+        patterns:
+          - "org.springframework.boot*"
+          - "org.springframework*"
+          - "io.spring*"
+      # Group Kotlin updates into a single PR
+      kotlin:
+        patterns:
+          - "org.jetbrains.kotlin*"
+          - "org.jetbrains*"
+      # Group test libraries together
+      testing:
+        patterns:
+          - "org.junit*"
+          - "io.mockk*"
+          - "io.kotest*"
+          - "org.testcontainers*"
+    labels:
+      - "dependencies"
+      - "gradle"
+
+  # --- GitHub Actions themselves ---
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"
